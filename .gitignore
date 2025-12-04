@@ -1,0 +1,74 @@
+# Dependencies
+node_modules/
+vendor/
+package-lock.json
+
+# Environment and sensitive config
+.env
+.env.*
+config/ai-config.php
+config/*.local.php
+*.local.php
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-*
+.project
+.settings/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+error_log
+
+# Uploads - user generated content
+uploads/
+!uploads/.gitkeep
+
+# Test and setup files
+test-*.php
+setup-*.php
+create-test-user.php
+
+# Prototype/demo files (not needed in production)
+prototype/
+
+# Build and compiled files
+dist/
+build/
+*.min.js
+*.min.css
+
+# Cache
+*.cache
+.cache/
+tmp/
+temp/
+
+# Database dumps and backups
+*.sql
+*.sql.gz
+!database/schema.sql
+
+# PHP debugging
+.phpunit.result.cache
+phpunit.xml
+.php-cs-fixer.cache
+
+# Misc
+*.bak
+*.backup
+*.old
+*.orig
+*~

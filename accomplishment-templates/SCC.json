@@ -1,0 +1,21 @@
+{
+  "template_key": "SCC",
+  "template_title": "Science Communication Cluster",
+  "template_version": 1,
+  "sections": [
+    {
+      "key": "scicomm_plans",
+      "title": "Science Communication Plans for AANR Knowledge Developed/Facilitated",
+      "type": "table",
+      "columns": ["plan_title", "audience", "channels", "status"]
+    },
+    {
+      "key": "promotion_approaches",
+      "title": "Technology Promotion Approaches",
+      "type": "table",
+      "columns": ["approach", "reach", "engagement", "remarks"]
+    }
+  ]
+}
+
+

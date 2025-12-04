@@ -1,0 +1,45 @@
+{
+  "template_key": "ICTC",
+  "template_title": "Information and Communications Technology Cluster",
+  "template_version": 1,
+  "sections": [
+    {
+      "key": "ict_resources_shared",
+      "title": "ICT Resources Shared",
+      "type": "table",
+      "columns": ["resource", "quantity", "recipient", "remarks"]
+    },
+    {
+      "key": "systems_developed",
+      "title": "Database/System Developed, Enhanced and Maintained",
+      "type": "table",
+      "columns": ["system_name", "purpose", "status", "users"]
+    },
+    {
+      "key": "rd_technologies_generated",
+      "title": "Technologies/Information Generated from R&D (ICT)",
+      "type": "table",
+      "columns": ["title", "brief_description", "stage", "lead_unit"]
+    },
+    {
+      "key": "technologies_deployed",
+      "title": "Technologies Deployed through Various Extension Modalities (ICT)",
+      "type": "table",
+      "columns": ["technology", "modality", "location", "beneficiaries"]
+    },
+    {
+      "key": "commercialization",
+      "title": "Technologies Commercialized or Pre-Commercialization Initiatives",
+      "type": "table",
+      "columns": ["technology", "partner", "status", "revenue"]
+    },
+    {
+      "key": "equipment_funded",
+      "title": "ICT Equipment/Facilities Funded",
+      "type": "table",
+      "columns": ["item", "quantity", "fund_source", "amount"]
+    }
+  ]
+}
+
+

@@ -1,0 +1,51 @@
+{
+  "template_key": "TTC",
+  "template_title": "Technology Transfer Cluster",
+  "template_version": 1,
+  "sections": [
+    {
+      "key": "resources_shared",
+      "title": "Resources Shared (Technology Transfer)",
+      "type": "table",
+      "columns": ["resource", "quantity", "recipient", "remarks"]
+    },
+    {
+      "key": "resources_generated",
+      "title": "Resources Generated (Technology Transfer)",
+      "type": "table",
+      "columns": ["type", "amount", "source", "remarks"]
+    },
+    {
+      "key": "programs_packaged",
+      "title": "Technology Transfer Programs/Projects Packaged, Approved and Implemented",
+      "type": "table",
+      "columns": ["program_project", "status", "lead_unit", "partners"]
+    },
+    {
+      "key": "technologies_deployed",
+      "title": "Technologies Deployed through Various Extension Modalities",
+      "type": "table",
+      "columns": ["technology", "modality", "location", "beneficiaries"]
+    },
+    {
+      "key": "field_events",
+      "title": "Field Days / Field Visits / Inception Meetings",
+      "type": "table",
+      "columns": ["event", "date", "venue", "participants"]
+    },
+    {
+      "key": "commercialization",
+      "title": "Technologies Commercialized or Pre-Commercialization Initiatives",
+      "type": "table",
+      "columns": ["technology", "partner", "status", "revenue"]
+    },
+    {
+      "key": "equipment_funded",
+      "title": "Equipment/Facilities Funded",
+      "type": "table",
+      "columns": ["item", "quantity", "fund_source", "amount"]
+    }
+  ]
+}
+
+

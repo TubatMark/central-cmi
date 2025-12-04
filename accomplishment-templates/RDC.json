@@ -1,0 +1,63 @@
+{
+  "template_key": "RDC",
+  "template_title": "Research and Development Cluster",
+  "template_version": 1,
+  "sections": [
+    {
+      "key": "in_house_reviews",
+      "title": "Agency In-house Reviews Conducted",
+      "type": "table",
+      "columns": ["agency", "date", "venue", "no_of_papers", "remarks"]
+    },
+    {
+      "key": "papers_presented",
+      "title": "Information for Each Paper Presented (R&D)",
+      "type": "table",
+      "columns": ["title", "author", "event", "place", "date"]
+    },
+    {
+      "key": "resources_shared",
+      "title": "Resources Shared (R&D)",
+      "type": "table",
+      "columns": ["resource", "quantity", "recipient", "remarks"]
+    },
+    {
+      "key": "resources_generated",
+      "title": "Resources Generated (R&D)",
+      "type": "table",
+      "columns": ["type", "amount", "source", "remarks"]
+    },
+    {
+      "key": "programs_packaged",
+      "title": "R&D Programs/Projects Packaged, Approved and Implemented",
+      "type": "table",
+      "columns": ["program_project", "status", "lead_unit", "partners"]
+    },
+    {
+      "key": "collaborative_projects",
+      "title": "Collaborative R&D Programs/Projects",
+      "type": "table",
+      "columns": ["title", "partners", "duration", "remarks"]
+    },
+    {
+      "key": "policy_researches",
+      "title": "Policy Researches Conducted",
+      "type": "table",
+      "columns": ["title", "sector", "status", "output"]
+    },
+    {
+      "key": "policies",
+      "title": "Policies Formulated/Advocated/Implemented/Institutionalized",
+      "type": "table",
+      "columns": ["title", "stage", "agency", "remarks"]
+    },
+    {
+      "key": "equipment_funded",
+      "title": "Equipment/Facilities Funded",
+      "type": "table",
+      "columns": ["item", "quantity", "fund_source", "amount"]
+    }
+  ]
+}
+
+
