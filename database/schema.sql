@@ -74,11 +74,14 @@ CREATE TABLE IF NOT EXISTS `Activity` (
   `reported_period_start` DATE NOT NULL,
   `reported_period_end` DATE NOT NULL,
   `location` VARCHAR(200) NULL,
+  `implementing_agency` VARCHAR(200) NULL,
+  `collaborating_agency` VARCHAR(200) NULL,
   `participants_count` INT UNSIGNED NULL,
   `budget_amount` DECIMAL(12,2) NULL,
   `status` ENUM('not_started','in_progress','completed') NOT NULL DEFAULT 'in_progress',
   `accomplishmentDetails` JSON NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ActivityID`),
   KEY `idx_activity_created_by` (`created_by`),
   KEY `idx_activity_period_start` (`reported_period_start`),
@@ -87,41 +90,6 @@ CREATE TABLE IF NOT EXISTS `Activity` (
   CONSTRAINT `fk_activity_created_by`
     FOREIGN KEY (`created_by`) REFERENCES `User` (`UserID`)
     ON UPDATE CASCADE ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Common: Non-degree Trainings Conducted/ Facilitated
-CREATE TABLE IF NOT EXISTS `NonDegreeTraining` (
-  `TrainingID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ActivityID` BIGINT UNSIGNED NOT NULL,
-  `title` VARCHAR(255) NOT NULL,
-  `date_venue` VARCHAR(255) NOT NULL,
-  `num_participants` INT UNSIGNED NOT NULL DEFAULT 0,
-  `expenditures` DECIMAL(12,2) NULL,
-  `source_of_funds` VARCHAR(255) NULL,
-  PRIMARY KEY (`TrainingID`),
-  KEY `idx_training_activity` (`ActivityID`),
-  CONSTRAINT `fk_training_activity`
-    FOREIGN KEY (`ActivityID`) REFERENCES `Activity` (`ActivityID`)
-    ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Common: Awards Received
-CREATE TABLE IF NOT EXISTS `Award` (
-  `AwardID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ActivityID` BIGINT UNSIGNED NOT NULL,
-  `scope` ENUM('Local','Regional','National','International') NOT NULL,
-  `title` VARCHAR(255) NOT NULL,
-  `recipient_agency` VARCHAR(255) NOT NULL,
-  `sponsor` VARCHAR(255) NULL,
-  `event_activity` VARCHAR(255) NULL,
-  `place_of_award` VARCHAR(255) NULL,
-  `date_of_award` DATE NULL,
-  PRIMARY KEY (`AwardID`),
-  KEY `idx_award_activity` (`ActivityID`),
-  KEY `idx_award_scope` (`scope`),
-  CONSTRAINT `fk_award_activity`
-    FOREIGN KEY (`ActivityID`) REFERENCES `Activity` (`ActivityID`)
-    ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Calendar Activities
@@ -140,34 +108,6 @@ CREATE TABLE IF NOT EXISTS `CalendarActivity` (
   CONSTRAINT `fk_calendar_created_by`
     FOREIGN KEY (`created_by`) REFERENCES `User` (`UserID`)
     ON UPDATE CASCADE ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Reports
-CREATE TABLE IF NOT EXISTS `Report` (
-  `ReportID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `generated_by` BIGINT UNSIGNED NOT NULL,
-  `type` ENUM('individual','agency','cluster','yearly_consolidated') NOT NULL,
-  `generated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ReportID`),
-  KEY `idx_report_generated_by` (`generated_by`),
-  KEY `idx_report_type` (`type`),
-  CONSTRAINT `fk_report_generated_by`
-    FOREIGN KEY (`generated_by`) REFERENCES `User` (`UserID`)
-    ON UPDATE CASCADE ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Activity ↔ Report (many-to-many)
-CREATE TABLE IF NOT EXISTS `ActivityReport` (
-  `ReportID` BIGINT UNSIGNED NOT NULL,
-  `ActivityID` BIGINT UNSIGNED NOT NULL,
-  PRIMARY KEY (`ReportID`, `ActivityID`),
-  KEY `idx_activityreport_activity` (`ActivityID`),
-  CONSTRAINT `fk_activityreport_report`
-    FOREIGN KEY (`ReportID`) REFERENCES `Report` (`ReportID`)
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT `fk_activityreport_activity`
-    FOREIGN KEY (`ActivityID`) REFERENCES `Activity` (`ActivityID`)
-    ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Activity Attachments (images/documents)

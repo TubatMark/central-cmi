@@ -231,7 +231,7 @@ include '../../includes/navbar.php';
 </div>
 
 <script>
-    const API_URL = '/central-cmi/api/notifications.php';
+    const API_URL = BASE_URL + 'api/notifications.php';
     let allNotifications = [];
     let currentQuickFilter = 'all';
 

@@ -216,7 +216,7 @@ include '../../includes/navbar.php';
     <script>
         // Users data loaded from database
         let users = [];
-        const API_URL = '/central-cmi/api/users.php';
+        const API_URL = BASE_URL + 'api/users.php';
 
         // Load users from database
         async function loadUsers() {

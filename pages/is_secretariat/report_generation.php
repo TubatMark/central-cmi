@@ -335,7 +335,7 @@ include '../../includes/navbar.php';
     </main>
 
     <script>
-        const API_URL = '/central-cmi/api/generate-report.php';
+        const API_URL = BASE_URL + 'api/generate-report.php';
         let generatedReportUrl = null;
         let abortController = null;
 

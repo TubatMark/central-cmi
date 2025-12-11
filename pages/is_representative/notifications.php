@@ -105,7 +105,7 @@ include '../../includes/navbar.php';
     </div>
 
     <script>
-        const API_URL = '/central-cmi/api/notifications.php';
+        const API_URL = BASE_URL + 'api/notifications.php';
         let notifications = [];
         let currentFilter = 'all';
         let currentNotification = null;

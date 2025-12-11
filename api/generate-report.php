@@ -59,7 +59,7 @@ try {
         'success' => true,
         'message' => 'Report generated successfully',
         'filename' => $filename,
-        'download_url' => '/central-cmi/api/download-report.php?file=' . urlencode($filename),
+        'download_url' => BASE_URL . 'api/download-report.php?file=' . urlencode($filename),
         'narrative' => $narrative
     ]);
     

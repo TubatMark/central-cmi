@@ -1,4 +1,7 @@
 <?php
+// Load app configuration for dynamic base URL
+require_once __DIR__ . '/../config/app.php';
+
 // Set default page title if not provided
 if (!isset($pageTitle)) {
     $pageTitle = "Central CMI";
@@ -9,10 +12,8 @@ if (!isset($bodyClass)) {
     $bodyClass = "bg-background min-h-screen";
 }
 
-// Ensure base URL is available
-if (!isset($base_url)) {
-    $base_url = '/central-cmi/';
-}
+// Use dynamic base URL from app config
+$base_url = defined('BASE_URL') ? BASE_URL : '/';
 ?>
 <!DOCTYPE html>
 <html lang="en">

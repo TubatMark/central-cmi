@@ -519,7 +519,7 @@ function scrollToElement(elementId, offset = 0) {
 }
 
 // Export functions for global use
-window.Central CMI = {
+window.CentralCMI = {
     showNotification,
     hideAlert,
     copyToClipboard,

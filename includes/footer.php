@@ -1,4 +1,9 @@
-<?php if (!isset($base_url)) { $base_url = '/central-cmi/'; } ?>
+<?php 
+// Use dynamic base URL from app config
+if (!isset($base_url)) { 
+    $base_url = defined('BASE_URL') ? BASE_URL : '/'; 
+} 
+?>
 <footer class="bg-surface border-t border-secondary-200 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-12">

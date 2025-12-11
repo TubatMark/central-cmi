@@ -1,9 +1,10 @@
 <?php
 // Get current page for active navigation highlighting
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
-if (!isset($base_url)) { $base_url = '/central-cmi/'; }
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 @require_once __DIR__ . '/../database/config.php';
+// Use dynamic base URL from app config (loaded via database/config.php)
+if (!isset($base_url)) { $base_url = defined('BASE_URL') ? BASE_URL : '/'; }
 
 $displayName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'User';
 $displaySubtitle = '';
@@ -212,6 +213,9 @@ if (isset($_SESSION['user_id']) && isset($pdo)) {
 </header>
 
 <script>
+// Dynamic base URL from PHP
+const BASE_URL = '<?php echo $base_url; ?>';
+
 // Mobile menu and user dropdown functionality
 function toggleMobileMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
@@ -243,7 +247,7 @@ let navbarNotifications = [];
 // Fetch notifications from API for navbar
 async function fetchNavbarNotifications() {
     try {
-        const response = await fetch('/central-cmi/api/notifications.php');
+        const response = await fetch(BASE_URL + 'api/notifications.php');
         const data = await response.json();
         
         if (data.success) {

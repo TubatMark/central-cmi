@@ -2,9 +2,12 @@
 // Start session for user management
 session_start();
 
-// Configuration
-$base_url = '/central-cmi/';
+// Load configuration
+require_once __DIR__ . '/config/app.php';
 require_once __DIR__ . '/database/auth.php';
+
+// Use dynamic base URL
+$base_url = defined('BASE_URL') ? BASE_URL : '/';
 // Representatives and Secretariat can access the landing page
 require_role(['representative', 'secretariat']);
 $pageTitle = 'Dashboard';

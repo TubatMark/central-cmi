@@ -16,7 +16,8 @@ function require_role(array $allowed_roles) {
     if (!$user_has_role && $isSecretariat) { $user_has_role = true; }
 
     if (!$user_has_role) {
-        $base = isset($GLOBALS['base_url']) ? $GLOBALS['base_url'] : '/central-cmi/';
+        // Use dynamic base URL from app config
+        $base = defined('BASE_URL') ? BASE_URL : (isset($GLOBALS['base_url']) ? $GLOBALS['base_url'] : '/');
         header('Location: ' . $base . 'pages/login.php');
         exit;
     }

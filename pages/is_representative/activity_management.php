@@ -35,7 +35,7 @@ include '../../includes/navbar.php';
 
     <!-- Filters and Search Section -->
     <section class="bg-surface rounded-xl shadow-card border border-secondary-200 p-6 mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             <!-- Search -->
             <div class="lg:col-span-2">
                 <label for="search" class="block text-sm font-medium text-text-primary mb-2">Search Activities</label>
@@ -47,30 +47,21 @@ include '../../includes/navbar.php';
                 </div>
             </div>
 
-            <!-- Status Filter -->
+            <!-- Type Filter -->
             <div>
-                <label for="status-filter" class="block text-sm font-medium text-text-primary mb-2">Status</label>
-                <select id="status-filter" class="form-input" onchange="filterActivities()">
-                    <option value>All Status</option>
-                    <option value="not-started">Not Started</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="on-hold">On Hold</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-            </div>
-
-            <!-- Category Filter -->
-            <div>
-                <label for="category-filter" class="block text-sm font-medium text-text-primary mb-2">Category</label>
-                <select id="category-filter" class="form-input" onchange="filterActivities()">
-                    <option value>All Categories</option>
-                    <option value="policy">Policy Development</option>
-                    <option value="research">Research</option>
-                    <option value="training">Training</option>
-                    <option value="outreach">Public Outreach</option>
-                    <option value="compliance">Compliance</option>
-                    <option value="infrastructure">Infrastructure</option>
+                <label for="type-filter" class="block text-sm font-medium text-text-primary mb-2">Type of Event</label>
+                <select id="type-filter" class="form-input" onchange="filterActivities()">
+                    <option value="">All Types</option>
+                    <option value="Seminar">Seminar</option>
+                    <option value="Training">Training</option>
+                    <option value="Workshop">Workshop</option>
+                    <option value="Conference">Conference</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Exhibit">Exhibit</option>
+                    <option value="Field Day">Field Day</option>
+                    <option value="Technology Forum">Technology Forum</option>
+                    <option value="Lakbay-Aral">Lakbay-Aral</option>
+                    <option value="Others">Others</option>
                 </select>
             </div>
         </div>
@@ -96,118 +87,154 @@ include '../../includes/navbar.php';
         <!-- Results Summary -->
         <div class="flex items-center justify-between pt-4 border-t border-secondary-200">
             <div class="text-sm text-text-secondary">
-                Showing <span id="results-count" class="font-medium text-text-primary">12</span> of 
-                <span id="total-count" class="font-medium text-text-primary">12</span> activities
+                Showing <span id="results-count" class="font-medium text-text-primary">0</span> of 
+                <span id="total-count" class="font-medium text-text-primary">0</span> activities
             </div>
-            <div class="flex space-x-4 text-sm">
-                <span class="flex items-center">
-                    <div class="w-3 h-3 bg-success rounded-full mr-2"></div>
-                    <span class="text-text-secondary">Completed: <span class="font-medium text-text-primary">5</span></span>
-                </span>
-                <span class="flex items-center">
-                    <div class="w-3 h-3 bg-warning rounded-full mr-2"></div>
-                    <span class="text-text-secondary">In Progress: <span class="font-medium text-text-primary">4</span></span>
-                </span>
-                <span class="flex items-center">
-                    <div class="w-3 h-3 bg-secondary-400 rounded-full mr-2"></div>
-                    <span class="text-text-secondary">Not Started: <span class="font-medium text-text-primary">3</span></span>
-                </span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bulk Actions -->
-    <section class="bg-surface rounded-xl shadow-card border border-secondary-200 p-4 mb-6" id="bulk-actions" style="display: none;">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center">
-                <span class="text-sm text-text-secondary mr-4">
-                    <span id="selected-count">0</span> activities selected
-                </span>
-                <div class="flex space-x-2">
-                    <select id="bulk-status" class="form-input text-sm py-1">
-                        <option value>Change Status</option>
-                        <option value="not-started">Not Started</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                        <option value="on-hold">On Hold</option>
-                    </select>
-                    <button type="button" class="btn-primary text-sm py-1" onclick="applyBulkAction()">
-                        Apply
-                    </button>
-                </div>
-            </div>
-            <button type="button" class="text-text-secondary hover:text-text-primary" onclick="clearSelection()">
-                <i class="fas fa-times"></i>
-            </button>
         </div>
     </section>
 
     <!-- Activity Form Modal -->
     <div id="activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-surface rounded-xl shadow-modal max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="bg-surface rounded-xl shadow-modal max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <div class="p-6 border-b border-secondary-200">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-xl font-semibold text-text-primary">Create New Activity</h3>
+                        <h3 id="modal-title" class="text-xl font-semibold text-text-primary">Create New Activity</h3>
                         <button type="button" class="text-text-secondary hover:text-text-primary" onclick="closeActivityForm()">
                             <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>
                 </div>
                 <div class="p-6">
-                    <form id="activity-form" onsubmit="submitActivity(event)">
-                        <!-- Basic Activity Information -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <form id="activity-form" onsubmit="submitActivity(event)" enctype="multipart/form-data">
+                        <!-- Title -->
+                        <div class="mb-4">
+                            <label for="activity-title" class="block text-sm font-medium text-text-primary mb-2">Title of Activity <span class="text-red-500">*</span></label>
+                            <input type="text" id="activity-title" name="title" class="form-input" placeholder="Enter activity title" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="activity-description" class="block text-sm font-medium text-text-primary mb-2">Description <span class="text-red-500">*</span></label>
+                            <textarea id="activity-description" name="description" rows="3" class="form-input" placeholder="Describe the activity..." required></textarea>
+                        </div>
+
+                        <!-- Date Range -->
+                        <div class="mb-4 grid grid-cols-2 gap-4">
                             <div>
-                                <label for="activity-title" class="block text-sm font-medium text-text-primary mb-2">Activity Title *</label>
-                                <input type="text" id="activity-title" name="title" class="form-input" required>
-                            </div>
-                            <div>
-                                <label for="activity-type" class="block text-sm font-medium text-text-primary mb-2">Type *</label>
-                                <select id="activity-type" name="type" class="form-input" required>
-                                    <option value="">Choose type</option>
-                                    <option value="event">Event</option>
-                                    <option value="training">Training</option>
-                                    <option value="fiesta">Fiesta</option>
-                                    <option value="exhibit">Exhibit</option>
-                                    <option value="meeting">Meeting</option>
-                                    <option value="others">Others (specify)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="activity-start-date" class="block text-sm font-medium text-text-primary mb-2">Start Date *</label>
+                                <label for="activity-start-date" class="block text-sm font-medium text-text-primary mb-2">Start Date <span class="text-red-500">*</span></label>
                                 <input type="date" id="activity-start-date" name="startDate" class="form-input" required>
                             </div>
                             <div>
-                                <label for="activity-end-date" class="block text-sm font-medium text-text-primary mb-2">End Date *</label>
+                                <label for="activity-end-date" class="block text-sm font-medium text-text-primary mb-2">End Date <span class="text-red-500">*</span></label>
                                 <input type="date" id="activity-end-date" name="endDate" class="form-input" required>
                             </div>
                         </div>
-                        
-                        <!-- Other Type Field -->
-                        <div id="other-type-wrapper" class="mb-6 hidden">
-                            <label for="other-type" class="block text-sm font-medium text-text-primary mb-2">Specify Type *</label>
-                            <input type="text" id="other-type" name="otherType" class="form-input" placeholder="Please specify the activity type">
-                        </div>
-                        
-                        <div class="mb-6">
-                            <label for="activity-description" class="block text-sm font-medium text-text-primary mb-2">Description</label>
-                            <textarea id="activity-description" name="description" rows="3" class="form-input" placeholder="Describe the activity..."></textarea>
+
+                        <!-- Venue -->
+                        <div class="mb-4">
+                            <label for="activity-venue" class="block text-sm font-medium text-text-primary mb-2">Venue <span class="text-red-500">*</span></label>
+                            <input type="text" id="activity-venue" name="venue" class="form-input" placeholder="Enter venue/location" required>
                         </div>
 
-                        <!-- Dynamic Accomplishment Template Sections -->
-                        <div id="accomplishment-sections" class="mb-6">
-                            <h4 class="text-lg font-semibold text-text-primary mb-4">Accomplishment Details</h4>
-                            <div id="template-sections">
-                                <!-- Template sections will be loaded dynamically here -->
+                        <!-- Implementing Agency -->
+                        <div class="mb-4">
+                            <label for="implementing-agency" class="block text-sm font-medium text-text-primary mb-2">Implementing Agency <span class="text-red-500">*</span></label>
+                            <select id="implementing-agency" name="implementingAgency" class="form-input" required>
+                                <option value="">Select agency</option>
+                                <option value="PCAARRD">PCAARRD</option>
+                                <option value="DOST-IX">DOST-IX</option>
+                                <option value="DA-RFO IX">DA-RFO IX</option>
+                                <option value="WMSU">WMSU</option>
+                                <option value="JHCSC">JHCSC</option>
+                                <option value="DTI-IX">DTI-IX</option>
+                                <option value="BFAR-IX">BFAR-IX</option>
+                                <option value="NEDA-IX">NEDA-IX</option>
+                                <option value="PRRI-IX">PRRI-IX</option>
+                                <option value="PhilFIDA-IX">PhilFIDA-IX</option>
+                                <option value="DA-BAR">DA-BAR</option>
+                                <option value="PCA-ZRC">PCA-ZRC</option>
+                            </select>
+                        </div>
+
+                        <!-- Collaborating Agency (Optional) -->
+                        <div class="mb-4">
+                            <label for="collaborating-agency" class="block text-sm font-medium text-text-primary mb-2">Collaborating Agency <span class="text-text-secondary text-xs">(Optional)</span></label>
+                            <select id="collaborating-agency" name="collaboratingAgency" class="form-input">
+                                <option value="">Select agency (optional)</option>
+                                <option value="PCAARRD">PCAARRD</option>
+                                <option value="DOST-IX">DOST-IX</option>
+                                <option value="DA-RFO IX">DA-RFO IX</option>
+                                <option value="WMSU">WMSU</option>
+                                <option value="JHCSC">JHCSC</option>
+                                <option value="DTI-IX">DTI-IX</option>
+                                <option value="BFAR-IX">BFAR-IX</option>
+                                <option value="NEDA-IX">NEDA-IX</option>
+                                <option value="PRRI-IX">PRRI-IX</option>
+                                <option value="PhilFIDA-IX">PhilFIDA-IX</option>
+                                <option value="DA-BAR">DA-BAR</option>
+                                <option value="PCA-ZRC">PCA-ZRC</option>
+                            </select>
+                        </div>
+
+                        <!-- Participants Count and Budget Amount -->
+                        <div class="mb-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="participants-count" class="block text-sm font-medium text-text-primary mb-2">Participants Count <span class="text-text-secondary text-xs">(Optional)</span></label>
+                                <input type="number" id="participants-count" name="participantsCount" class="form-input" placeholder="Enter number" min="0">
                             </div>
+                            <div>
+                                <label for="budget-amount" class="block text-sm font-medium text-text-primary mb-2">Budget Amount <span class="text-text-secondary text-xs">(Optional)</span></label>
+                                <input type="number" id="budget-amount" name="budgetAmount" class="form-input" placeholder="Enter amount" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <!-- Type of Event -->
+                        <div class="mb-4">
+                            <label for="activity-type" class="block text-sm font-medium text-text-primary mb-2">Type of Event <span class="text-red-500">*</span></label>
+                            <select id="activity-type" name="type" class="form-input" required>
+                                <option value="">Select event type</option>
+                                <option value="Seminar">Seminar</option>
+                                <option value="Training">Training</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Conference">Conference</option>
+                                <option value="Meeting">Meeting</option>
+                                <option value="Exhibit">Exhibit</option>
+                                <option value="Field Day">Field Day</option>
+                                <option value="Technology Forum">Technology Forum</option>
+                                <option value="Lakbay-Aral">Lakbay-Aral</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+
+                        <!-- Other Type Field (shows when Others is selected) -->
+                        <div id="other-type-wrapper" class="mb-4 hidden">
+                            <label for="other-type" class="block text-sm font-medium text-text-primary mb-2">Specify Type <span class="text-red-500">*</span></label>
+                            <input type="text" id="other-type" name="otherType" class="form-input" placeholder="Please specify the event type">
+                        </div>
+
+                        <!-- Photo Documentation -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-text-primary mb-2">Photo Documentation <span class="text-text-secondary text-xs">(Optional)</span></label>
+                            <div class="border-2 border-dashed border-secondary-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
+                                <input type="file" id="activity-photos" name="images[]" multiple accept="image/*" class="hidden" onchange="handlePhotoSelection(event)">
+                                <label for="activity-photos" class="cursor-pointer">
+                                    <div class="flex flex-col items-center">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-secondary-400 mb-2"></i>
+                                        <p class="text-text-secondary text-sm">Click to upload or drag and drop</p>
+                                        <p class="text-text-secondary text-xs mt-1">PNG, JPG, GIF up to 5MB each (multiple allowed)</p>
+                                    </div>
+                                </label>
+                            </div>
+                            <!-- Photo Preview -->
+                            <div id="photo-preview" class="grid grid-cols-3 gap-2 mt-4"></div>
                         </div>
 
                         <!-- Form Actions -->
                         <div class="flex justify-end space-x-3 pt-6 border-t border-secondary-200">
                             <button type="button" class="btn-secondary" onclick="closeActivityForm()">Cancel</button>
                             <button type="submit" class="btn-primary">
-                                <i class="fas fa-save mr-2"></i>Create Activity
+                                <i class="fas fa-save mr-2"></i><span id="submit-btn-text">Create Activity</span>
                             </button>
                         </div>
                     </form>
@@ -223,17 +250,12 @@ include '../../includes/navbar.php';
             <table class="min-w-full divide-y divide-secondary-200">
                 <thead class="bg-secondary-50">
                     <tr>
-                        <th class="px-6 py-3 text-left">
-                            <input type="checkbox" id="select-all" class="w-4 h-4 text-primary bg-surface border-secondary-300 rounded focus:ring-primary-500" onchange="toggleSelectAll()" />
-                        </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Title</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Start Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">End Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Description</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
-                            Actions
-                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Venue</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Implementing Agency</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="activities-table-body" class="bg-surface divide-y divide-secondary-200">
@@ -285,106 +307,65 @@ include '../../includes/navbar.php';
 
 <script>
 // Global variables
-let currentTemplate = null;
-let activityCounter = 0;
 let activities = [];
+let selectedPhotos = [];
 
-// Load accomplishment template based on user position
-async function loadAccomplishmentTemplate() {
-    try {
-        const response = await fetch('/central-cmi/api/get-accomplishment-template.php');
-        const data = await response.json();
-        
-        if (data.success) {
-            currentTemplate = data.template;
-            renderTemplateSections(data.template);
-        } else {
-            console.error('Failed to load template:', data.error);
-            showNotification('Failed to load accomplishment template', 'error');
-        }
-    } catch (error) {
-        console.error('Error loading template:', error);
-        showNotification('Error loading accomplishment template', 'error');
-    }
-}
-
-// Render template sections in the form
-function renderTemplateSections(template) {
-    const container = document.getElementById('template-sections');
-    container.innerHTML = '';
+// Handle photo selection and preview
+function handlePhotoSelection(event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById('photo-preview');
     
-    template.sections.forEach((section, index) => {
-        const sectionDiv = document.createElement('div');
-        sectionDiv.className = 'mb-6 p-4 bg-secondary-50 rounded-lg';
-        sectionDiv.innerHTML = `
-            <h5 class="text-md font-semibold text-text-primary mb-3">${section.title}</h5>
-            <div id="section-${section.key}" class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-text-secondary">Add entries for this section</span>
-                    <button type="button" class="btn-secondary text-sm" onclick="addTableRow('${section.key}', ${JSON.stringify(section.columns).replace(/"/g, '&quot;')})">
-                        <i class="fas fa-plus mr-1"></i>Add Row
-                    </button>
-                </div>
-                <div id="table-${section.key}" class="overflow-x-auto">
-                    <table class="min-w-full text-sm">
-                        <thead class="bg-surface">
-                            <tr>
-                                ${section.columns.map(col => `<th class="px-3 py-2 text-left font-medium text-text-secondary">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}
-                                <th class="px-3 py-2 text-left font-medium text-text-secondary">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-${section.key}">
-                            <!-- Rows will be added dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-        container.appendChild(sectionDiv);
+    // Store selected files
+    selectedPhotos = Array.from(files);
+    
+    // Clear previous previews
+    previewContainer.innerHTML = '';
+    
+    // Create previews
+    selectedPhotos.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.className = 'relative';
+            div.innerHTML = `
+                <img src="${e.target.result}" alt="Preview ${index + 1}" class="w-full h-24 object-cover rounded-lg border border-secondary-200">
+                <button type="button" onclick="removePhoto(${index})" class="absolute -top-2 -right-2 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-error-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            previewContainer.appendChild(div);
+        };
+        reader.readAsDataURL(file);
     });
 }
 
-// Add a new row to a table section
-function addTableRow(sectionKey, columns) {
-    const tbody = document.getElementById(`tbody-${sectionKey}`);
-    const rowId = `row-${sectionKey}-${++activityCounter}`;
+// Remove a photo from selection
+function removePhoto(index) {
+    selectedPhotos.splice(index, 1);
     
-    const row = document.createElement('tr');
-    row.id = rowId;
-    row.className = 'border-b border-secondary-200';
+    // Update the file input
+    const dataTransfer = new DataTransfer();
+    selectedPhotos.forEach(file => dataTransfer.items.add(file));
+    document.getElementById('activity-photos').files = dataTransfer.files;
     
-    let rowHtml = '';
-    columns.forEach(column => {
-        const inputType = column.includes('date') ? 'date' : 
-                         column.includes('amount') || column.includes('quantity') ? 'number' : 'text';
-        rowHtml += `
-            <td class="px-3 py-2">
-                <input type="${inputType}" 
-                       name="${sectionKey}[${activityCounter}][${column}]" 
-                       class="w-full px-2 py-1 text-sm border border-secondary-300 rounded focus:ring-primary-500 focus:border-primary-500"
-                       placeholder="${column.replace(/_/g, ' ')}">
-            </td>
-        `;
+    // Re-render previews
+    const previewContainer = document.getElementById('photo-preview');
+    previewContainer.innerHTML = '';
+    selectedPhotos.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.className = 'relative';
+            div.innerHTML = `
+                <img src="${e.target.result}" alt="Preview ${idx + 1}" class="w-full h-24 object-cover rounded-lg border border-secondary-200">
+                <button type="button" onclick="removePhoto(${idx})" class="absolute -top-2 -right-2 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-error-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            previewContainer.appendChild(div);
+        };
+        reader.readAsDataURL(file);
     });
-    
-    rowHtml += `
-        <td class="px-3 py-2">
-            <button type="button" class="text-error hover:text-error-700" onclick="removeTableRow('${rowId}')">
-                <i class="fas fa-trash text-sm"></i>
-            </button>
-        </td>
-    `;
-    
-    row.innerHTML = rowHtml;
-    tbody.appendChild(row);
-}
-
-// Remove a table row
-function removeTableRow(rowId) {
-    const row = document.getElementById(rowId);
-    if (row) {
-        row.remove();
-    }
 }
 
 // Open activity form modal
@@ -393,10 +374,9 @@ function openActivityForm() {
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     
-    // Load template if not already loaded
-    if (!currentTemplate) {
-        loadAccomplishmentTemplate();
-    }
+    // Reset modal title and button text for create mode
+    document.getElementById('modal-title').textContent = 'Create New Activity';
+    document.getElementById('submit-btn-text').textContent = 'Create Activity';
 }
 
 // Close activity form modal
@@ -414,76 +394,35 @@ function closeActivityForm() {
     // Hide other type field
     document.getElementById('other-type-wrapper').classList.add('hidden');
     
-    // Clear template sections
-    const container = document.getElementById('template-sections');
-    container.innerHTML = '<p class="text-text-secondary">Loading template...</p>';
+    // Clear photo previews
+    document.getElementById('photo-preview').innerHTML = '';
+    selectedPhotos = [];
+    
+    // Reset modal title and button
+    document.getElementById('modal-title').textContent = 'Create New Activity';
+    document.getElementById('submit-btn-text').textContent = 'Create Activity';
 }
 
 // Submit activity form
 async function submitActivity(event) {
     event.preventDefault();
     
-    const formData = new FormData(event.target);
-    const activityData = {
-        title: formData.get('title'),
-        type: formData.get('type'),
-        otherType: formData.get('otherType'),
-        startDate: formData.get('startDate'),
-        endDate: formData.get('endDate'),
-        description: formData.get('description'),
-        status: 'not_started',
-        accomplishments: {}
-    };
+    const form = event.target;
+    const formData = new FormData(form);
     
-    // Collect accomplishment data
-    if (currentTemplate) {
-        currentTemplate.sections.forEach(section => {
-            const sectionData = [];
-            const inputs = document.querySelectorAll(`input[name^="${section.key}["]`);
-            
-            // Group inputs by row
-            const rowGroups = {};
-            inputs.forEach(input => {
-                const nameMatch = input.name.match(/(\w+)\[(\d+)\]\[(\w+)\]/);
-                if (nameMatch) {
-                    const [, sectionKey, rowIndex, columnKey] = nameMatch;
-                    if (!rowGroups[rowIndex]) {
-                        rowGroups[rowIndex] = {};
-                    }
-                    rowGroups[rowIndex][columnKey] = input.value;
-                }
-            });
-            
-            // Convert to array
-            Object.values(rowGroups).forEach(rowData => {
-                if (Object.values(rowData).some(value => value.trim() !== '')) {
-                    sectionData.push(rowData);
-                }
-            });
-            
-            if (sectionData.length > 0) {
-                activityData.accomplishments[section.key] = {
-                    title: section.title,
-                    data: sectionData
-                };
-            }
-        });
+    const editId = form.dataset.editId;
+    const isEdit = editId && editId !== '';
+    
+    // For edit mode with FormData, add method override
+    if (isEdit) {
+        formData.append('_method', 'PUT');
+        formData.append('id', editId);
     }
     
     try {
-        const editId = document.getElementById('activity-form').dataset.editId;
-        const isEdit = editId && editId !== '';
-        
-        // Save to database
-        const response = await fetch('/central-cmi/api/activities.php', {
-            method: isEdit ? 'PUT' : 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                ...activityData,
-                id: editId
-            })
+        const response = await fetch(BASE_URL + 'api/activities.php', {
+            method: 'POST',
+            body: formData
         });
         
         const result = await response.json();
@@ -492,10 +431,10 @@ async function submitActivity(event) {
             // Create calendar event for new activities
             if (!isEdit) {
                 await createCalendarEvent({
-                    title: activityData.title,
-                    startDate: activityData.startDate,
-                    endDate: activityData.endDate,
-                    details: activityData.description
+                    title: formData.get('title'),
+                    startDate: formData.get('startDate'),
+                    endDate: formData.get('endDate'),
+                    details: formData.get('description')
                 });
             }
             
@@ -532,7 +471,7 @@ function showNotification(message, type = 'info') {
 // Database API functions
 async function loadActivities() {
     try {
-        const response = await fetch('/central-cmi/api/activities.php');
+        const response = await fetch(BASE_URL + 'api/activities.php');
         const data = await response.json();
         
         if (data.success) {
@@ -551,7 +490,7 @@ async function loadActivities() {
 // Calendar event functions
 async function createCalendarEvent(eventData) {
     try {
-        const response = await fetch('/central-cmi/api/calendar.php', {
+        const response = await fetch(BASE_URL + 'api/calendar.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -588,14 +527,11 @@ function renderActivities() {
     // Render desktop table
     tbody.innerHTML = activities.map(activity => `
         <tr class="hover:bg-secondary-50">
-            <td class="px-6 py-4">
-                <input type="checkbox" class="w-4 h-4 text-primary bg-surface border-secondary-300 rounded focus:ring-primary-500" onchange="updateBulkActions()" />
-            </td>
-            <td class="px-6 py-4 text-sm text-text-primary">${activity.title}</td>
-            <td class="px-6 py-4 text-sm text-text-secondary">${activity.status || 'Not Started'}</td>
-            <td class="px-6 py-4 text-sm text-text-secondary">${new Date(activity.reported_period_start).toLocaleDateString()}</td>
-            <td class="px-6 py-4 text-sm text-text-secondary">${new Date(activity.reported_period_end).toLocaleDateString()}</td>
-            <td class="px-6 py-4 text-sm text-text-secondary">${(activity.description || '').slice(0, 120)}${(activity.description || '').length > 120 ? '…' : ''}</td>
+            <td class="px-6 py-4 text-sm text-text-primary font-medium">${activity.title}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.type || '-'}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.reported_period_start ? new Date(activity.reported_period_start).toLocaleDateString() : '-'}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.location || '-'}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.implementing_agency || '-'}</td>
             <td class="px-6 py-4">
                 <div class="flex space-x-2">
                     <button type="button" class="text-primary hover:text-primary-700" title="Edit" onclick="editActivity(${activity.ActivityID})">
@@ -618,7 +554,7 @@ function renderActivities() {
             <div class="flex items-start justify-between mb-3">
                 <div class="flex-1">
                     <h3 class="text-sm font-medium text-text-primary">${activity.title}</h3>
-                    <p class="text-xs text-text-secondary mt-1">${activity.description || 'No description'}</p>
+                    <p class="text-xs text-text-secondary mt-1">${activity.type || 'No type'} | ${activity.location || 'No venue'}</p>
                 </div>
                 <div class="flex space-x-2 ml-2">
                     <button type="button" class="text-primary hover:text-primary-700" onclick="editActivity(${activity.ActivityID})">
@@ -630,8 +566,8 @@ function renderActivities() {
                 </div>
             </div>
             <div class="flex items-center justify-between text-xs mb-2">
-                <span class="text-text-secondary">Status: ${activity.status || 'Not Started'}</span>
-                <span class="text-text-secondary">${new Date(activity.reported_period_start).toLocaleDateString()} - ${new Date(activity.reported_period_end).toLocaleDateString()}</span>
+                <span class="text-text-secondary">${activity.implementing_agency || '-'}</span>
+                <span class="text-text-secondary">${activity.reported_period_start ? new Date(activity.reported_period_start).toLocaleDateString() : '-'}</span>
             </div>
         </div>
     `).join('');
@@ -641,21 +577,10 @@ function renderActivities() {
 }
 
 // Update activity counts
-function updateActivityCounts() {
+function updateActivityCounts(filteredCount = null) {
     const total = activities.length;
-    const completed = activities.filter(a => a.status === 'completed').length;
-    const inProgress = activities.filter(a => a.status === 'in_progress').length;
-    const notStarted = activities.filter(a => a.status === 'not_started').length;
-    
-    document.getElementById('results-count').textContent = total;
+    document.getElementById('results-count').textContent = filteredCount !== null ? filteredCount : total;
     document.getElementById('total-count').textContent = total;
-    
-    // Update summary stats
-    const summaryStats = document.querySelectorAll('.text-2xl.font-bold');
-    if (summaryStats[0]) summaryStats[0].textContent = total;
-    if (summaryStats[1]) summaryStats[1].textContent = completed;
-    if (summaryStats[2]) summaryStats[2].textContent = inProgress;
-    if (summaryStats[3]) summaryStats[3].textContent = notStarted;
 }
 
 // Activity management functions
@@ -663,20 +588,31 @@ function editActivity(id) {
     const activity = activities.find(a => a.ActivityID == id);
     if (activity) {
         // Fill form with activity data
-        document.getElementById('activity-title').value = activity.title;
-        document.getElementById('activity-type').value = activity.type || '';
-        document.getElementById('activity-start-date').value = activity.reported_period_start;
-        document.getElementById('activity-end-date').value = activity.reported_period_end;
+        document.getElementById('activity-title').value = activity.title || '';
         document.getElementById('activity-description').value = activity.description || '';
+        document.getElementById('activity-start-date').value = activity.reported_period_start || '';
+        document.getElementById('activity-end-date').value = activity.reported_period_end || '';
+        document.getElementById('activity-venue').value = activity.location || '';
+        document.getElementById('implementing-agency').value = activity.implementing_agency || '';
+        document.getElementById('collaborating-agency').value = activity.collaborating_agency || '';
+        document.getElementById('participants-count').value = activity.participants_count || '';
+        document.getElementById('budget-amount').value = activity.budget_amount || '';
+        document.getElementById('activity-type').value = activity.type || '';
         
         // Handle other type field
-        if (activity.type === 'others') {
+        if (activity.type === 'Others') {
             document.getElementById('other-type-wrapper').classList.remove('hidden');
             document.getElementById('other-type').value = activity.otherType || '';
         }
         
+        // Update modal title and button
+        document.getElementById('modal-title').textContent = 'Edit Activity';
+        document.getElementById('submit-btn-text').textContent = 'Update Activity';
+        
         // Open modal
-        openActivityForm();
+        const modal = document.getElementById('activity-modal');
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
         
         // Store current activity ID for update
         document.getElementById('activity-form').dataset.editId = id;
@@ -734,86 +670,123 @@ async function clearAllActivities() {
 
 // Filter activities
 function filterActivities() {
-    // Implement filtering functionality
-    console.log('Filtering activities...');
+    const search = document.getElementById('search').value.toLowerCase();
+    const typeFilter = document.getElementById('type-filter').value;
+    const dateFrom = document.getElementById('date-from').value;
+    const dateTo = document.getElementById('date-to').value;
+    
+    let filtered = activities.filter(activity => {
+        // Search filter
+        if (search) {
+            const title = (activity.title || '').toLowerCase();
+            const description = (activity.description || '').toLowerCase();
+            const venue = (activity.location || '').toLowerCase();
+            if (!title.includes(search) && !description.includes(search) && !venue.includes(search)) {
+                return false;
+            }
+        }
+        
+        // Type filter
+        if (typeFilter && activity.type !== typeFilter) {
+            return false;
+        }
+        
+        // Date range filter
+        if (dateFrom && activity.reported_period_start < dateFrom) {
+            return false;
+        }
+        if (dateTo && activity.reported_period_start > dateTo) {
+            return false;
+        }
+        
+        return true;
+    });
+    
+    renderFilteredActivities(filtered);
+    updateActivityCounts(filtered.length);
+}
+
+// Render filtered activities
+function renderFilteredActivities(filteredActivities) {
+    const tbody = document.getElementById('activities-table-body');
+    const mobileView = document.getElementById('activities-mobile-view');
+    
+    if (filteredActivities.length === 0) {
+        document.getElementById('empty-state').classList.remove('hidden');
+        tbody.innerHTML = '';
+        mobileView.innerHTML = '';
+        return;
+    }
+    
+    document.getElementById('empty-state').classList.add('hidden');
+    
+    // Desktop table
+    tbody.innerHTML = filteredActivities.map(activity => `
+        <tr class="hover:bg-secondary-50">
+            <td class="px-6 py-4 text-sm text-text-primary font-medium">${activity.title}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.type || '-'}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.reported_period_start ? new Date(activity.reported_period_start).toLocaleDateString() : '-'}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.location || '-'}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">${activity.implementing_agency || '-'}</td>
+            <td class="px-6 py-4">
+                <div class="flex space-x-2">
+                    <button type="button" class="text-primary hover:text-primary-700" title="Edit" onclick="editActivity(${activity.ActivityID})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="text-text-secondary hover:text-primary" title="View" onclick="viewActivity(${activity.ActivityID})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="text-error hover:text-error-700" title="Delete" onclick="deleteActivity(${activity.ActivityID})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    
+    // Mobile cards
+    mobileView.innerHTML = filteredActivities.map(activity => `
+        <div class="bg-surface border border-secondary-200 rounded-lg p-4 mb-4">
+            <div class="flex items-start justify-between mb-3">
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-text-primary">${activity.title}</h3>
+                    <p class="text-xs text-text-secondary mt-1">${activity.type || 'No type'} | ${activity.location || 'No venue'}</p>
+                </div>
+                <div class="flex space-x-2 ml-2">
+                    <button type="button" class="text-primary hover:text-primary-700" onclick="editActivity(${activity.ActivityID})">
+                        <i class="fas fa-edit text-sm"></i>
+                    </button>
+                    <button type="button" class="text-error hover:text-error-700" onclick="deleteActivity(${activity.ActivityID})">
+                        <i class="fas fa-trash text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center justify-between text-xs mb-2">
+                <span class="text-text-secondary">${activity.implementing_agency || '-'}</span>
+                <span class="text-text-secondary">${activity.reported_period_start ? new Date(activity.reported_period_start).toLocaleDateString() : '-'}</span>
+            </div>
+        </div>
+    `).join('');
 }
 
 // Clear filters
 function clearFilters() {
     document.getElementById('search').value = '';
-    document.getElementById('status-filter').value = '';
-    document.getElementById('category-filter').value = '';
+    document.getElementById('type-filter').value = '';
     document.getElementById('date-from').value = '';
     document.getElementById('date-to').value = '';
-    filterActivities();
-}
-
-// Sort table
-function sortTable(column) {
-    console.log('Sorting by:', column);
-    // Implement sorting functionality
-}
-
-// Toggle select all
-function toggleSelectAll() {
-    const selectAll = document.getElementById('select-all');
-    const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
-    
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = selectAll.checked;
-    });
-    
-    updateBulkActions();
-}
-
-// Update bulk actions visibility
-function updateBulkActions() {
-    const selectedCount = document.querySelectorAll('tbody input[type="checkbox"]:checked').length;
-    const bulkActions = document.getElementById('bulk-actions');
-    const selectedCountSpan = document.getElementById('selected-count');
-    
-    if (selectedCount > 0) {
-        bulkActions.style.display = 'block';
-        selectedCountSpan.textContent = selectedCount;
-    } else {
-        bulkActions.style.display = 'none';
-    }
-}
-
-// Apply bulk action
-function applyBulkAction() {
-    const status = document.getElementById('bulk-status').value;
-    if (status) {
-        showNotification(`Updating ${document.getElementById('selected-count').textContent} activities to ${status}`, 'info');
-        // Implement bulk update
-    }
-}
-
-// Clear selection
-function clearSelection() {
-    const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
-    });
-    document.getElementById('select-all').checked = false;
-    updateBulkActions();
+    renderActivities();
+    updateActivityCounts();
 }
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners for checkboxes
-    document.addEventListener('change', function(e) {
-        if (e.target.type === 'checkbox' && e.target.closest('tbody')) {
-            updateBulkActions();
-        }
-    });
-    
     // Toggle other type field
     const typeSelect = document.getElementById('activity-type');
     const otherWrapper = document.getElementById('other-type-wrapper');
     if (typeSelect && otherWrapper) {
         typeSelect.addEventListener('change', function() {
-            if (this.value === 'others') {
+            if (this.value === 'Others') {
                 otherWrapper.classList.remove('hidden');
             } else {
                 otherWrapper.classList.add('hidden');

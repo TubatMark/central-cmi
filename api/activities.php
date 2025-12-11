@@ -57,15 +57,25 @@ try {
 
 function handleGetActivities($pdo) {
     $userId = $_SESSION['user_id'];
+    $isSecretariat = is_secretariat();
     
-    // Both secretariat and representatives see only their own activities
-    $sql = "SELECT a.*, u.firstName, u.lastName, u.position, u.agency 
-            FROM Activity a 
-            LEFT JOIN User u ON a.created_by = u.UserID 
-            WHERE a.created_by = ? 
-            ORDER BY a.created_at DESC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$userId]);
+    // Secretariat sees all activities, representatives see only their own
+    if ($isSecretariat) {
+        $sql = "SELECT a.*, u.firstName, u.lastName, u.position, u.agency as creator_agency 
+                FROM Activity a 
+                LEFT JOIN User u ON a.created_by = u.UserID 
+                ORDER BY a.created_at DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    } else {
+        $sql = "SELECT a.*, u.firstName, u.lastName, u.position, u.agency as creator_agency 
+                FROM Activity a 
+                LEFT JOIN User u ON a.created_by = u.UserID 
+                WHERE a.created_by = ? 
+                ORDER BY a.created_at DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId]);
+    }
     
     $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -85,10 +95,8 @@ function handleGetActivities($pdo) {
     }
     
     foreach ($activities as &$activity) {
-        // Decode JSON fields
-        if ($activity['accomplishmentDetails']) {
-            $activity['accomplishmentDetails'] = json_decode($activity['accomplishmentDetails'], true);
-        }
+        // Map activity_type to type for frontend compatibility
+        $activity['type'] = $activity['activity_type'] ?? null;
         
         // Get attachments if table exists
         if ($attachmentStmt) {
@@ -113,7 +121,7 @@ function handleCreateActivity($pdo, $input) {
     }
     
     // Validate required fields
-    $requiredFields = ['title', 'type', 'startDate', 'endDate'];
+    $requiredFields = ['title', 'description', 'startDate', 'endDate', 'venue', 'implementingAgency', 'type'];
     foreach ($requiredFields as $field) {
         if (empty($input[$field])) {
             http_response_code(400);
@@ -124,25 +132,31 @@ function handleCreateActivity($pdo, $input) {
     
     $userId = $_SESSION['user_id'];
     
+    // Handle type - if "Others" is selected, use the otherType value
+    $activityType = $input['type'];
+    if ($activityType === 'Others' && !empty($input['otherType'])) {
+        $activityType = $input['otherType'];
+    }
+    
     // Prepare activity data
     $activityData = [
         'created_by' => $userId,
         'title' => $input['title'],
-        'description' => $input['description'] ?? null,
+        'activity_type' => $activityType,
+        'description' => $input['description'],
         'reported_period_start' => $input['startDate'],
         'reported_period_end' => $input['endDate'],
-        'location' => $input['location'] ?? null,
-        'participants_count' => !empty($input['participants_count']) ? $input['participants_count'] : null,
-        'budget_amount' => $input['budget_amount'] ?? null,
-        'status' => $input['status'] ?? 'not_started',
-        'accomplishmentDetails' => json_encode($input['accomplishments'] ?? [])
+        'location' => $input['venue'],
+        'implementing_agency' => $input['implementingAgency'],
+        'collaborating_agency' => $input['collaboratingAgency'] ?? null,
+        'participants_count' => !empty($input['participantsCount']) ? (int)$input['participantsCount'] : null,
+        'budget_amount' => !empty($input['budgetAmount']) ? (float)$input['budgetAmount'] : null
     ];
     
-    // Insert activity
-    $sql = "INSERT INTO Activity (created_by, title, description, reported_period_start, reported_period_end, 
-            location, participants_count, budget_amount, status, accomplishmentDetails) 
-            VALUES (:created_by, :title, :description, :reported_period_start, :reported_period_end, 
-            :location, :participants_count, :budget_amount, :status, :accomplishmentDetails)";
+    $sql = "INSERT INTO Activity (created_by, title, activity_type, description, reported_period_start, reported_period_end, 
+            location, implementing_agency, collaborating_agency, participants_count, budget_amount) 
+            VALUES (:created_by, :title, :activity_type, :description, :reported_period_start, :reported_period_end, 
+            :location, :implementing_agency, :collaborating_agency, :participants_count, :budget_amount)";
     
     $stmt = $pdo->prepare($sql);
     $result = $stmt->execute($activityData);
@@ -153,11 +167,6 @@ function handleCreateActivity($pdo, $input) {
         // Handle file uploads
         if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             handleFileUploads($pdo, $activityId, $_FILES['images']);
-        }
-        
-        // Insert related data based on activity type
-        if (isset($input['accomplishments'])) {
-            insertAccomplishmentData($pdo, $activityId, $input['accomplishments']);
         }
         
         echo json_encode([
@@ -200,19 +209,46 @@ function handleUpdateActivity($pdo, $input) {
     $updateFields = [];
     $updateData = ['id' => $activityId];
     
-    $allowedFields = ['title', 'description', 'reported_period_start', 'reported_period_end', 
-                     'location', 'participants_count', 'budget_amount', 'status'];
+    // Map form fields to database fields
+    $fieldMapping = [
+        'title' => 'title',
+        'description' => 'description',
+        'startDate' => 'reported_period_start',
+        'endDate' => 'reported_period_end',
+        'venue' => 'location',
+        'type' => 'activity_type'
+    ];
     
-    foreach ($allowedFields as $field) {
-        if (isset($input[$field])) {
-            $updateFields[] = "$field = :$field";
-            $updateData[$field] = $input[$field];
+    foreach ($fieldMapping as $formField => $dbField) {
+        if (isset($input[$formField])) {
+            $updateFields[] = "$dbField = :$dbField";
+            $updateData[$dbField] = $input[$formField];
         }
     }
     
-    if (isset($input['accomplishments'])) {
-        $updateFields[] = "accomplishmentDetails = :accomplishmentDetails";
-        $updateData['accomplishmentDetails'] = json_encode($input['accomplishments']);
+    // Handle type - if "Others" is selected, use the otherType value
+    if (isset($updateData['activity_type']) && $updateData['activity_type'] === 'Others' && !empty($input['otherType'])) {
+        $updateData['activity_type'] = $input['otherType'];
+    }
+    
+    // Handle agency fields
+    if (isset($input['implementingAgency'])) {
+        $updateFields[] = "implementing_agency = :implementing_agency";
+        $updateData['implementing_agency'] = $input['implementingAgency'];
+    }
+    if (isset($input['collaboratingAgency'])) {
+        $updateFields[] = "collaborating_agency = :collaborating_agency";
+        $updateData['collaborating_agency'] = $input['collaboratingAgency'] ?: null;
+    }
+    
+    // Handle optional numeric fields
+    if (isset($input['participantsCount'])) {
+        $updateFields[] = "participants_count = :participants_count";
+        $updateData['participants_count'] = !empty($input['participantsCount']) ? (int)$input['participantsCount'] : null;
+    }
+    if (isset($input['budgetAmount'])) {
+        $updateFields[] = "budget_amount = :budget_amount";
+        $updateData['budget_amount'] = !empty($input['budgetAmount']) ? (float)$input['budgetAmount'] : null;
     }
     
     if (empty($updateFields)) {
@@ -280,48 +316,6 @@ function handleDeleteActivity($pdo) {
     } else {
         http_response_code(500);
         echo json_encode(['error' => 'Failed to delete activity']);
-    }
-}
-
-function insertAccomplishmentData($pdo, $activityId, $accomplishments) {
-    // Insert NonDegreeTraining data
-    if (isset($accomplishments['ict_resources_shared']['data'])) {
-        foreach ($accomplishments['ict_resources_shared']['data'] as $training) {
-            if (!empty($training['resource'])) {
-                $sql = "INSERT INTO NonDegreeTraining (ActivityID, title, date_venue, num_participants, expenditures, source_of_funds) 
-                        VALUES (?, ?, ?, ?, ?, ?)";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([
-                    $activityId,
-                    $training['resource'] ?? '',
-                    $training['recipient'] ?? '',
-                    $training['quantity'] ?? 0,
-                    $training['amount'] ?? null,
-                    $training['remarks'] ?? ''
-                ]);
-            }
-        }
-    }
-    
-    // Insert Award data
-    if (isset($accomplishments['systems_developed']['data'])) {
-        foreach ($accomplishments['systems_developed']['data'] as $award) {
-            if (!empty($award['system_name'])) {
-                $sql = "INSERT INTO Award (ActivityID, scope, title, recipient_agency, sponsor, event_activity, place_of_award, date_of_award) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([
-                    $activityId,
-                    'Local', // Default scope
-                    $award['system_name'] ?? '',
-                    $award['purpose'] ?? '',
-                    $award['users'] ?? '',
-                    $award['status'] ?? '',
-                    '',
-                    null
-                ]);
-            }
-        }
     }
 }
 

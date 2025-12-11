@@ -43,30 +43,30 @@ include '../../includes/navbar.php';
                 </div>
             </div>
 
-            <!-- Status Filter -->
+            <!-- CMI Filter -->
             <div>
-                <label for="status-filter" class="block text-sm font-medium text-text-primary mb-2">Status</label>
-                <select id="status-filter" class="form-input" onchange="filterActivities()">
-                    <option value>All Status</option>
-                    <option value="not-started">Not Started</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="on-hold">On Hold</option>
-                    <option value="cancelled">Cancelled</option>
+                <label for="cmi-filter" class="block text-sm font-medium text-text-primary mb-2">CMI / Agency</label>
+                <select id="cmi-filter" class="form-input" onchange="filterActivities()">
+                    <option value="">All CMIs</option>
+                    <!-- Options populated dynamically from activities data -->
                 </select>
             </div>
 
-            <!-- Category Filter -->
+            <!-- Type of Event Filter -->
             <div>
-                <label for="category-filter" class="block text-sm font-medium text-text-primary mb-2">Category</label>
-                <select id="category-filter" class="form-input" onchange="filterActivities()">
-                    <option value>All Categories</option>
-                    <option value="policy">Policy Development</option>
-                    <option value="research">Research</option>
-                    <option value="training">Training</option>
-                    <option value="outreach">Public Outreach</option>
-                    <option value="compliance">Compliance</option>
-                    <option value="infrastructure">Infrastructure</option>
+                <label for="type-filter" class="block text-sm font-medium text-text-primary mb-2">Type of Event</label>
+                <select id="type-filter" class="form-input" onchange="filterActivities()">
+                    <option value="">All Types</option>
+                    <option value="Seminar">Seminar</option>
+                    <option value="Training">Training</option>
+                    <option value="Workshop">Workshop</option>
+                    <option value="Conference">Conference</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Exhibit">Exhibit</option>
+                    <option value="Field Day">Field Day</option>
+                    <option value="Technology Forum">Technology Forum</option>
+                    <option value="Lakbay-Aral">Lakbay-Aral</option>
+                    <option value="Others">Others</option>
                 </select>
             </div>
         </div>
@@ -95,46 +95,6 @@ include '../../includes/navbar.php';
                 Showing <span id="results-count" class="font-medium text-text-primary">0</span> of 
                 <span id="total-count" class="font-medium text-text-primary">0</span> activities
             </div>
-            <div class="flex flex-wrap gap-4 text-sm">
-                <span class="flex items-center">
-                    <div class="w-3 h-3 bg-success rounded-full mr-2"></div>
-                    <span class="text-text-secondary">Completed: <span id="count-completed" class="font-medium text-text-primary">0</span></span>
-                </span>
-                <span class="flex items-center">
-                    <div class="w-3 h-3 bg-warning rounded-full mr-2"></div>
-                    <span class="text-text-secondary">In Progress: <span id="count-in-progress" class="font-medium text-text-primary">0</span></span>
-                </span>
-                <span class="flex items-center">
-                    <div class="w-3 h-3 bg-secondary-400 rounded-full mr-2"></div>
-                    <span class="text-text-secondary">Not Started: <span id="count-not-started" class="font-medium text-text-primary">0</span></span>
-                </span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bulk Actions -->
-    <section class="bg-surface rounded-xl shadow-card border border-secondary-200 p-4 mb-6" id="bulk-actions" style="display: none;">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center">
-                <span class="text-sm text-text-secondary mr-4">
-                    <span id="selected-count">0</span> activities selected
-                </span>
-                <div class="flex space-x-2">
-                    <select id="bulk-status" class="form-input text-sm py-1">
-                        <option value>Change Status</option>
-                        <option value="not-started">Not Started</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                        <option value="on-hold">On Hold</option>
-                    </select>
-                    <button type="button" class="btn-primary text-sm py-1" onclick="applyBulkAction()">
-                        Apply
-                    </button>
-                </div>
-            </div>
-            <button type="button" class="text-text-secondary hover:text-text-primary" onclick="clearSelection()">
-                <i class="fas fa-times"></i>
-            </button>
         </div>
     </section>
 
@@ -145,22 +105,19 @@ include '../../includes/navbar.php';
             <table class="min-w-full divide-y divide-secondary-200">
                 <thead class="bg-secondary-50">
                     <tr>
-                        <th class="px-6 py-3 text-left">
-                            <input type="checkbox" id="select-all" class="w-4 h-4 text-primary bg-surface border-secondary-300 rounded focus:ring-primary-500" onchange="toggleSelectAll()" />
-                        </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Title</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Start Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">End Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
-                            Actions
-                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">CMI</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Venue</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Implementing Agency</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="activities-table-body" class="bg-surface divide-y divide-secondary-200">
                     <!-- Loading state -->
                     <tr id="loading-row">
-                        <td colspan="6" class="px-6 py-8 text-center text-text-secondary">
+                        <td colspan="7" class="px-6 py-8 text-center text-text-secondary">
                             <i class="fas fa-spinner fa-spin mr-2"></i> Loading activities...
                         </td>
                     </tr>
@@ -212,86 +169,147 @@ include '../../includes/navbar.php';
 <!-- Add/Edit Activity Modal -->
 <div id="add-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
     <div class="bg-surface rounded-xl shadow-xl border border-secondary-200 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h3 id="modal-title" class="text-lg font-semibold text-text-primary">Add Activity</h3>
-                <button type="button" onclick="closeActivityForm()" class="text-text-secondary hover:text-primary">
-                    <i class="fas fa-times"></i>
+        <div class="p-6 border-b border-secondary-200">
+            <div class="flex items-center justify-between">
+                <h3 id="modal-title" class="text-xl font-semibold text-text-primary">Create New Activity</h3>
+                <button type="button" onclick="closeActivityForm()" class="text-text-secondary hover:text-text-primary">
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            <form id="add-activity-form" onsubmit="return submitActivity(event)">
+        </div>
+        <div class="p-6">
+            <form id="add-activity-form" onsubmit="return submitActivity(event)" enctype="multipart/form-data">
                 <input type="hidden" id="edit-activity-id" value="" />
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-text-primary mb-2">Title <span class="text-error">*</span></label>
-                        <input type="text" id="activity-title" name="title" class="form-input" placeholder="Enter activity title" required />
-                    </div>
+                
+                <!-- Title -->
+                <div class="mb-4">
+                    <label for="activity-title" class="block text-sm font-medium text-text-primary mb-2">Title of Activity <span class="text-red-500">*</span></label>
+                    <input type="text" id="activity-title" name="title" class="form-input" placeholder="Enter activity title" required>
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">Type <span class="text-error">*</span></label>
-                        <select id="activity-type" name="type" class="form-input" required>
-                            <option value="">Choose type</option>
-                            <option value="event">Event</option>
-                            <option value="training">Training</option>
-                            <option value="fiesta">Fiesta</option>
-                            <option value="exhibit">Exhibit</option>
-                            <option value="meeting">Meeting</option>
-                            <option value="others">Others</option>
-                        </select>
-                    </div>
+                <!-- Description -->
+                <div class="mb-4">
+                    <label for="activity-description" class="block text-sm font-medium text-text-primary mb-2">Description <span class="text-red-500">*</span></label>
+                    <textarea id="activity-description" name="description" rows="3" class="form-input" placeholder="Describe the activity..." required></textarea>
+                </div>
 
+                <!-- Date Range -->
+                <div class="mb-4 grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">Status <span class="text-error">*</span></label>
-                        <select id="activity-status" name="status" class="form-input" required>
-                            <option value="not_started">Not Started</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">Start Date <span class="text-error">*</span></label>
-                        <input type="date" id="date-start" name="dateStart" class="form-input" required />
+                        <label for="activity-start-date" class="block text-sm font-medium text-text-primary mb-2">Start Date <span class="text-red-500">*</span></label>
+                        <input type="date" id="activity-start-date" name="startDate" class="form-input" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">End Date <span class="text-error">*</span></label>
-                        <input type="date" id="date-end" name="dateEnd" class="form-input" required />
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-text-primary mb-2">Description</label>
-                        <textarea id="activity-description" name="description" rows="3" class="form-input" placeholder="Describe the activity"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">Location</label>
-                        <input type="text" id="activity-location" name="location" class="form-input" placeholder="Enter location" />
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">Participants Count</label>
-                        <input type="number" id="activity-participants" name="participants_count" class="form-input" placeholder="0" min="0" />
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-text-primary mb-2">Attachments (Images)</label>
-                        <div class="border-2 border-dashed border-secondary-300 rounded-lg p-4 text-center hover:border-primary transition-colors">
-                            <input type="file" id="activity-images" name="images" multiple accept="image/*" class="hidden" onchange="previewImages(this)" />
-                            <label for="activity-images" class="cursor-pointer">
-                                <i class="fas fa-cloud-upload-alt text-3xl text-secondary-400 mb-2"></i>
-                                <p class="text-sm text-text-secondary">Click to upload images or drag and drop</p>
-                                <p class="text-xs text-text-secondary mt-1">PNG, JPG, GIF up to 5MB each</p>
-                            </label>
-                        </div>
-                        <div id="image-preview" class="grid grid-cols-4 gap-2 mt-3"></div>
-                        <div id="existing-attachments" class="mt-3"></div>
+                        <label for="activity-end-date" class="block text-sm font-medium text-text-primary mb-2">End Date <span class="text-red-500">*</span></label>
+                        <input type="date" id="activity-end-date" name="endDate" class="form-input" required>
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end space-x-3">
+                <!-- Venue -->
+                <div class="mb-4">
+                    <label for="activity-venue" class="block text-sm font-medium text-text-primary mb-2">Venue <span class="text-red-500">*</span></label>
+                    <input type="text" id="activity-venue" name="venue" class="form-input" placeholder="Enter venue/location" required>
+                </div>
+
+                <!-- Implementing Agency -->
+                <div class="mb-4">
+                    <label for="implementing-agency" class="block text-sm font-medium text-text-primary mb-2">Implementing Agency <span class="text-red-500">*</span></label>
+                    <select id="implementing-agency" name="implementingAgency" class="form-input" required>
+                        <option value="">Select agency</option>
+                        <option value="PCAARRD">PCAARRD</option>
+                        <option value="DOST-IX">DOST-IX</option>
+                        <option value="DA-RFO IX">DA-RFO IX</option>
+                        <option value="WMSU">WMSU</option>
+                        <option value="JHCSC">JHCSC</option>
+                        <option value="DTI-IX">DTI-IX</option>
+                        <option value="BFAR-IX">BFAR-IX</option>
+                        <option value="NEDA-IX">NEDA-IX</option>
+                        <option value="PRRI-IX">PRRI-IX</option>
+                        <option value="PhilFIDA-IX">PhilFIDA-IX</option>
+                        <option value="DA-BAR">DA-BAR</option>
+                        <option value="PCA-ZRC">PCA-ZRC</option>
+                    </select>
+                </div>
+
+                <!-- Collaborating Agency (Optional) -->
+                <div class="mb-4">
+                    <label for="collaborating-agency" class="block text-sm font-medium text-text-primary mb-2">Collaborating Agency <span class="text-text-secondary text-xs">(Optional)</span></label>
+                    <select id="collaborating-agency" name="collaboratingAgency" class="form-input">
+                        <option value="">Select agency (optional)</option>
+                        <option value="PCAARRD">PCAARRD</option>
+                        <option value="DOST-IX">DOST-IX</option>
+                        <option value="DA-RFO IX">DA-RFO IX</option>
+                        <option value="WMSU">WMSU</option>
+                        <option value="JHCSC">JHCSC</option>
+                        <option value="DTI-IX">DTI-IX</option>
+                        <option value="BFAR-IX">BFAR-IX</option>
+                        <option value="NEDA-IX">NEDA-IX</option>
+                        <option value="PRRI-IX">PRRI-IX</option>
+                        <option value="PhilFIDA-IX">PhilFIDA-IX</option>
+                        <option value="DA-BAR">DA-BAR</option>
+                        <option value="PCA-ZRC">PCA-ZRC</option>
+                    </select>
+                </div>
+
+                <!-- Participants Count and Budget Amount -->
+                <div class="mb-4 grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="participants-count" class="block text-sm font-medium text-text-primary mb-2">Participants Count <span class="text-text-secondary text-xs">(Optional)</span></label>
+                        <input type="number" id="participants-count" name="participantsCount" class="form-input" placeholder="Enter number" min="0">
+                    </div>
+                    <div>
+                        <label for="budget-amount" class="block text-sm font-medium text-text-primary mb-2">Budget Amount <span class="text-text-secondary text-xs">(Optional)</span></label>
+                        <input type="number" id="budget-amount" name="budgetAmount" class="form-input" placeholder="Enter amount" min="0" step="0.01">
+                    </div>
+                </div>
+
+                <!-- Type of Event -->
+                <div class="mb-4">
+                    <label for="activity-type" class="block text-sm font-medium text-text-primary mb-2">Type of Event <span class="text-red-500">*</span></label>
+                    <select id="activity-type" name="type" class="form-input" required>
+                        <option value="">Select event type</option>
+                        <option value="Seminar">Seminar</option>
+                        <option value="Training">Training</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Conference">Conference</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Exhibit">Exhibit</option>
+                        <option value="Field Day">Field Day</option>
+                        <option value="Technology Forum">Technology Forum</option>
+                        <option value="Lakbay-Aral">Lakbay-Aral</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+
+                <!-- Other Type Field (shows when Others is selected) -->
+                <div id="other-type-wrapper" class="mb-4 hidden">
+                    <label for="other-type" class="block text-sm font-medium text-text-primary mb-2">Specify Type <span class="text-red-500">*</span></label>
+                    <input type="text" id="other-type" name="otherType" class="form-input" placeholder="Please specify the event type">
+                </div>
+
+                <!-- Photo Documentation -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-text-primary mb-2">Photo Documentation <span class="text-text-secondary text-xs">(Optional)</span></label>
+                    <div class="border-2 border-dashed border-secondary-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
+                        <input type="file" id="activity-images" name="images[]" multiple accept="image/*" class="hidden" onchange="handlePhotoSelection(event)">
+                        <label for="activity-images" class="cursor-pointer">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-secondary-400 mb-2"></i>
+                                <p class="text-text-secondary text-sm">Click to upload or drag and drop</p>
+                                <p class="text-text-secondary text-xs mt-1">PNG, JPG, GIF up to 5MB each (multiple allowed)</p>
+                            </div>
+                        </label>
+                    </div>
+                    <!-- Photo Preview -->
+                    <div id="photo-preview" class="grid grid-cols-3 gap-2 mt-4"></div>
+                    <div id="existing-attachments" class="mt-3"></div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-secondary-200">
                     <button type="button" class="btn-secondary" onclick="closeActivityForm()">Cancel</button>
                     <button type="submit" id="submit-btn" class="btn-primary">
-                        <i class="fas fa-save mr-2"></i>Save Activity
+                        <i class="fas fa-save mr-2"></i><span id="submit-btn-text">Create Activity</span>
                     </button>
                 </div>
             </form>
@@ -302,7 +320,7 @@ include '../../includes/navbar.php';
 <script>
     // Global data store
     let allActivities = [];
-    const API_URL = '/central-cmi/api/activities.php';
+    const API_URL = BASE_URL + 'api/activities.php';
 
     // Load activities from database
     async function loadActivities() {
@@ -314,12 +332,42 @@ include '../../includes/navbar.php';
                 allActivities = data.activities || [];
                 renderActivities(allActivities);
                 updateStatusCounts();
+                populateCmiFilter();
             } else {
                 showError('Failed to load activities: ' + (data.error || 'Unknown error'));
             }
         } catch (error) {
             console.error('Error loading activities:', error);
             showError('Error connecting to server');
+        }
+    }
+
+    // Populate CMI filter dropdown dynamically based on implementing agencies
+    function populateCmiFilter() {
+        const cmiFilter = document.getElementById('cmi-filter');
+        const currentValue = cmiFilter.value;
+        
+        // Get unique agencies from activities (based on implementing agency)
+        const agencies = [...new Set(
+            allActivities
+                .map(a => a.implementing_agency)
+                .filter(agency => agency && agency.trim() !== '')
+        )].sort();
+        
+        // Clear existing options except the first one
+        cmiFilter.innerHTML = '<option value="">All CMIs</option>';
+        
+        // Add agency options
+        agencies.forEach(agency => {
+            const option = document.createElement('option');
+            option.value = agency;
+            option.textContent = agency;
+            cmiFilter.appendChild(option);
+        });
+        
+        // Restore previous selection if still valid
+        if (currentValue && agencies.includes(currentValue)) {
+            cmiFilter.value = currentValue;
         }
     }
 
@@ -342,25 +390,22 @@ include '../../includes/navbar.php';
 
         // Desktop table
         tbody.innerHTML = activities.map(activity => {
-            const statusClass = getStatusClass(activity.status);
-            const statusLabel = getStatusLabel(activity.status);
-            const startDate = formatDate(activity.reported_period_start);
-            const endDate = formatDate(activity.reported_period_end);
+            const activityDate = formatDate(activity.reported_period_start);
+            const cmi = activity.implementing_agency || '-';
 
             return `
                 <tr class="hover:bg-secondary-50 transition-micro" data-id="${activity.ActivityID}">
-                    <td class="px-6 py-4">
-                        <input type="checkbox" class="activity-checkbox w-4 h-4 text-primary bg-surface border-secondary-300 rounded" data-id="${activity.ActivityID}" onchange="updateBulkActions()" />
-                    </td>
                     <td class="px-6 py-4">
                         <div class="text-sm font-medium text-text-primary">${escapeHtml(activity.title)}</div>
                         <div class="text-xs text-text-secondary">${escapeHtml((activity.description || '').substring(0, 60))}${activity.description && activity.description.length > 60 ? '...' : ''}</div>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="status-badge ${statusClass}">${statusLabel}</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">${escapeHtml(cmi)}</span>
                     </td>
-                    <td class="px-6 py-4 text-sm text-text-secondary">${startDate}</td>
-                    <td class="px-6 py-4 text-sm text-text-secondary">${endDate}</td>
+                    <td class="px-6 py-4 text-sm text-text-secondary">${escapeHtml(activity.type || '-')}</td>
+                    <td class="px-6 py-4 text-sm text-text-secondary">${activityDate}</td>
+                    <td class="px-6 py-4 text-sm text-text-secondary">${escapeHtml(activity.location || '-')}</td>
+                    <td class="px-6 py-4 text-sm text-text-secondary">${escapeHtml(activity.implementing_agency || '-')}</td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-2">
                             <button class="text-secondary-600 hover:text-secondary-800 text-sm" title="View" onclick="viewActivity(${activity.ActivityID})">
@@ -380,20 +425,20 @@ include '../../includes/navbar.php';
 
         // Mobile cards
         mobile.innerHTML = activities.map(activity => {
-            const statusClass = getStatusClass(activity.status);
-            const statusLabel = getStatusLabel(activity.status);
-            const startDate = formatDate(activity.reported_period_start);
-            const endDate = formatDate(activity.reported_period_end);
+            const activityDate = formatDate(activity.reported_period_start);
+            const cmi = activity.implementing_agency || '-';
 
             return `
                 <div class="border-b border-secondary-200 p-4 hover:bg-secondary-50" data-id="${activity.ActivityID}">
                     <div class="flex items-start justify-between mb-2">
                         <div class="flex-1">
                             <h3 class="text-sm font-medium text-text-primary">${escapeHtml(activity.title)}</h3>
-                            <p class="text-xs text-text-secondary mt-1">${startDate} - ${endDate}</p>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mt-1">${escapeHtml(cmi)}</span>
+                            <p class="text-xs text-text-secondary mt-1">${escapeHtml(activity.type || '')} | ${escapeHtml(activity.location || '')}</p>
                         </div>
-                        <span class="status-badge ${statusClass} ml-2">${statusLabel}</span>
+                        <span class="text-xs text-text-secondary ml-2">${activityDate}</span>
                     </div>
+                    <div class="text-xs text-text-secondary mb-2">${escapeHtml(activity.implementing_agency || '-')}</div>
                     <div class="flex justify-end space-x-3 mt-2">
                         <button class="text-secondary-600 hover:text-secondary-800 text-sm" onclick="viewActivity(${activity.ActivityID})">
                             <i class="fas fa-eye"></i> View
@@ -413,76 +458,58 @@ include '../../includes/navbar.php';
         document.getElementById('total-count').textContent = allActivities.length;
     }
 
-    // Update status counts
-    function updateStatusCounts() {
-        const completed = allActivities.filter(a => a.status === 'completed').length;
-        const inProgress = allActivities.filter(a => a.status === 'in_progress').length;
-        const notStarted = allActivities.filter(a => a.status === 'not_started').length;
-
-        document.getElementById('count-completed').textContent = completed;
-        document.getElementById('count-in-progress').textContent = inProgress;
-        document.getElementById('count-not-started').textContent = notStarted;
-    }
-
-    // Get status CSS class
-    function getStatusClass(status) {
-        const classes = {
-            'completed': 'bg-success-100 text-success-700',
-            'in_progress': 'bg-warning-100 text-warning-700',
-            'not_started': 'bg-secondary-100 text-secondary-700'
-        };
-        return classes[status] || 'bg-secondary-100 text-secondary-700';
-    }
-
-    // Get status label
-    function getStatusLabel(status) {
-        const labels = {
-            'completed': 'Completed',
-            'in_progress': 'In Progress',
-            'not_started': 'Not Started'
-        };
-        return labels[status] || status;
-    }
-
     // Open activity form (add/edit)
     function openActivityForm(activityId = null) {
         const modal = document.getElementById('add-activity-modal');
         const form = document.getElementById('add-activity-form');
         const title = document.getElementById('modal-title');
+        const submitBtnText = document.getElementById('submit-btn-text');
         
         form.reset();
         document.getElementById('edit-activity-id').value = '';
-        document.getElementById('image-preview').innerHTML = '';
+        document.getElementById('photo-preview').innerHTML = '';
         document.getElementById('existing-attachments').innerHTML = '';
+        document.getElementById('other-type-wrapper').classList.add('hidden');
+        selectedPhotos = [];
         
         if (activityId) {
             const activity = allActivities.find(a => a.ActivityID == activityId);
             if (activity) {
                 title.textContent = 'Edit Activity';
+                submitBtnText.textContent = 'Update Activity';
                 document.getElementById('edit-activity-id').value = activityId;
                 document.getElementById('activity-title').value = activity.title || '';
-                document.getElementById('activity-type').value = activity.type || '';
-                document.getElementById('activity-status').value = activity.status || 'not_started';
-                document.getElementById('date-start').value = activity.reported_period_start || '';
-                document.getElementById('date-end').value = activity.reported_period_end || '';
                 document.getElementById('activity-description').value = activity.description || '';
-                document.getElementById('activity-location').value = activity.location || '';
-                document.getElementById('activity-participants').value = activity.participants_count || '';
+                document.getElementById('activity-start-date').value = activity.reported_period_start || '';
+                document.getElementById('activity-end-date').value = activity.reported_period_end || '';
+                document.getElementById('activity-venue').value = activity.location || '';
+                document.getElementById('implementing-agency').value = activity.implementing_agency || '';
+                document.getElementById('collaborating-agency').value = activity.collaborating_agency || '';
+                document.getElementById('participants-count').value = activity.participants_count || '';
+                document.getElementById('budget-amount').value = activity.budget_amount || '';
+                document.getElementById('activity-type').value = activity.type || '';
+                
+                // Handle "Others" type
+                if (activity.type === 'Others') {
+                    document.getElementById('other-type-wrapper').classList.remove('hidden');
+                    document.getElementById('other-type').value = activity.otherType || '';
+                }
                 
                 // Show existing attachments
                 if (activity.attachments && activity.attachments.length > 0) {
                     const existingDiv = document.getElementById('existing-attachments');
-                    existingDiv.innerHTML = '<p class="text-sm text-text-secondary mb-2">Existing attachments:</p><div class="grid grid-cols-4 gap-2">' +
+                    existingDiv.innerHTML = '<p class="text-sm text-text-secondary mb-2">Existing attachments:</p><div class="grid grid-cols-3 gap-2">' +
                         activity.attachments.map(att => `
                             <div class="relative group">
-                                <img src="/central-cmi/uploads/activities/${att.filename}" alt="${att.original_name}" class="w-full h-20 object-cover rounded border border-secondary-200" />
+                                <img src="${BASE_URL}uploads/activities/${att.filename}" alt="${att.original_name}" class="w-full h-20 object-cover rounded border border-secondary-200" />
                                 <p class="text-xs text-text-secondary truncate mt-1">${att.original_name}</p>
                             </div>
                         `).join('') + '</div>';
                 }
             }
         } else {
-            title.textContent = 'Add Activity';
+            title.textContent = 'Create New Activity';
+            submitBtnText.textContent = 'Create Activity';
         }
         
         modal.classList.remove('hidden');
@@ -492,33 +519,64 @@ include '../../includes/navbar.php';
         document.getElementById('add-activity-modal').classList.add('hidden');
         document.getElementById('add-activity-form').reset();
         document.getElementById('edit-activity-id').value = '';
-        document.getElementById('image-preview').innerHTML = '';
+        document.getElementById('photo-preview').innerHTML = '';
         document.getElementById('existing-attachments').innerHTML = '';
+        document.getElementById('other-type-wrapper').classList.add('hidden');
+        document.getElementById('modal-title').textContent = 'Create New Activity';
+        document.getElementById('submit-btn-text').textContent = 'Create Activity';
+        selectedPhotos = [];
     }
 
-    // Preview selected images
-    function previewImages(input) {
-        const preview = document.getElementById('image-preview');
-        preview.innerHTML = '';
+    // Photo handling
+    let selectedPhotos = [];
+    
+    function handlePhotoSelection(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('photo-preview');
         
-        if (input.files) {
-            Array.from(input.files).forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.className = 'relative group';
-                    div.innerHTML = `
-                        <img src="${e.target.result}" alt="${file.name}" class="w-full h-20 object-cover rounded border border-secondary-200" />
-                        <button type="button" onclick="removePreviewImage(${index})" class="absolute -top-2 -right-2 bg-error text-white rounded-full w-5 h-5 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <p class="text-xs text-text-secondary truncate mt-1">${file.name}</p>
-                    `;
-                    preview.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
+        selectedPhotos = Array.from(files);
+        previewContainer.innerHTML = '';
+        
+        selectedPhotos.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative';
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview ${index + 1}" class="w-full h-24 object-cover rounded-lg border border-secondary-200">
+                    <button type="button" onclick="removePhoto(${index})" class="absolute -top-2 -right-2 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-error-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                previewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    function removePhoto(index) {
+        selectedPhotos.splice(index, 1);
+        const dataTransfer = new DataTransfer();
+        selectedPhotos.forEach(file => dataTransfer.items.add(file));
+        document.getElementById('activity-images').files = dataTransfer.files;
+        
+        const previewContainer = document.getElementById('photo-preview');
+        previewContainer.innerHTML = '';
+        selectedPhotos.forEach((file, idx) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative';
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview ${idx + 1}" class="w-full h-24 object-cover rounded-lg border border-secondary-200">
+                    <button type="button" onclick="removePhoto(${idx})" class="absolute -top-2 -right-2 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-error-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                previewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
     }
 
     // Submit activity form
@@ -529,13 +587,19 @@ include '../../includes/navbar.php';
         const isEditing = editId && editId !== '';
         
         const title = document.getElementById('activity-title').value.trim();
+        const description = document.getElementById('activity-description').value.trim();
+        const startDate = document.getElementById('activity-start-date').value;
+        const endDate = document.getElementById('activity-end-date').value;
+        const venue = document.getElementById('activity-venue').value.trim();
+        const implementingAgency = document.getElementById('implementing-agency').value;
+        const collaboratingAgency = document.getElementById('collaborating-agency').value;
+        const participantsCount = document.getElementById('participants-count').value;
+        const budgetAmount = document.getElementById('budget-amount').value;
         const type = document.getElementById('activity-type').value;
-        const status = document.getElementById('activity-status').value;
-        const startDate = document.getElementById('date-start').value;
-        const endDate = document.getElementById('date-end').value;
+        const otherType = document.getElementById('other-type').value.trim();
 
         // Validation
-        if (!title || !type || !startDate || !endDate) {
+        if (!title || !description || !startDate || !endDate || !venue || !implementingAgency || !type) {
             showToast('Please fill in all required fields', 'error');
             return false;
         }
@@ -543,13 +607,16 @@ include '../../includes/navbar.php';
         // Use FormData for file uploads
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('type', type);
-        formData.append('status', status);
+        formData.append('description', description);
         formData.append('startDate', startDate);
         formData.append('endDate', endDate);
-        formData.append('description', document.getElementById('activity-description').value.trim());
-        formData.append('location', document.getElementById('activity-location').value.trim());
-        formData.append('participants_count', document.getElementById('activity-participants').value || '');
+        formData.append('venue', venue);
+        formData.append('implementingAgency', implementingAgency);
+        formData.append('collaboratingAgency', collaboratingAgency);
+        formData.append('participantsCount', participantsCount);
+        formData.append('budgetAmount', budgetAmount);
+        formData.append('type', type);
+        formData.append('otherType', otherType);
         
         // Add images
         const imageInput = document.getElementById('activity-images');
@@ -560,13 +627,12 @@ include '../../includes/navbar.php';
         }
 
         try {
-            let response;
             if (isEditing) {
                 formData.append('id', editId);
                 formData.append('_method', 'PUT');
             }
             
-            response = await fetch(API_URL, {
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 body: formData
             });
@@ -621,7 +687,8 @@ include '../../includes/navbar.php';
     // Filter activities
     function filterActivities() {
         const search = document.getElementById('search').value.toLowerCase();
-        const statusFilter = document.getElementById('status-filter').value;
+        const cmiFilter = document.getElementById('cmi-filter').value;
+        const typeFilter = document.getElementById('type-filter').value;
         const dateFrom = document.getElementById('date-from').value;
         const dateTo = document.getElementById('date-to').value;
 
@@ -635,14 +702,14 @@ include '../../includes/navbar.php';
                 match = match && (titleMatch || descMatch);
             }
 
-            // Status filter
-            if (statusFilter) {
-                const statusMap = {
-                    'not-started': 'not_started',
-                    'in-progress': 'in_progress',
-                    'completed': 'completed'
-                };
-                match = match && activity.status === statusMap[statusFilter];
+            // CMI filter (based on implementing agency)
+            if (cmiFilter) {
+                match = match && activity.implementing_agency === cmiFilter;
+            }
+
+            // Type of Event filter
+            if (typeFilter) {
+                match = match && activity.type === typeFilter;
             }
 
             // Date range filter
@@ -662,77 +729,20 @@ include '../../includes/navbar.php';
     // Clear filters
     function clearFilters() {
         document.getElementById('search').value = '';
-        document.getElementById('status-filter').value = '';
-        document.getElementById('category-filter').value = '';
+        document.getElementById('cmi-filter').value = '';
+        document.getElementById('type-filter').value = '';
         document.getElementById('date-from').value = '';
         document.getElementById('date-to').value = '';
         renderActivities(allActivities);
     }
 
-    // Bulk actions
-    function toggleSelectAll() {
-        const selectAll = document.getElementById('select-all');
-        const checkboxes = document.querySelectorAll('.activity-checkbox');
-        checkboxes.forEach(cb => cb.checked = selectAll.checked);
-        updateBulkActions();
-    }
-
-    function updateBulkActions() {
-        const checked = document.querySelectorAll('.activity-checkbox:checked');
-        const bulkActions = document.getElementById('bulk-actions');
-        const selectedCount = document.getElementById('selected-count');
+    // View activity details
+    function viewActivity(id) {
+        const activity = allActivities.find(a => a.ActivityID == id);
+        if (!activity) return;
         
-        if (checked.length > 0) {
-            bulkActions.style.display = 'block';
-            selectedCount.textContent = checked.length;
-        } else {
-            bulkActions.style.display = 'none';
-        }
-    }
-
-    async function applyBulkAction() {
-        const status = document.getElementById('bulk-status').value;
-        if (!status) {
-            showToast('Please select a status', 'warning');
-            return;
-        }
-
-        const checked = document.querySelectorAll('.activity-checkbox:checked');
-        const ids = Array.from(checked).map(cb => cb.dataset.id);
-
-        if (ids.length === 0) {
-            showToast('No activities selected', 'warning');
-            return;
-        }
-
-        const statusMap = {
-            'not-started': 'not_started',
-            'in-progress': 'in_progress',
-            'completed': 'completed'
-        };
-
-        try {
-            for (const id of ids) {
-                await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: parseInt(id), status: statusMap[status] })
-                });
-            }
-            
-            await loadActivities();
-            clearSelection();
-            showToast(`${ids.length} activities updated`, 'success');
-        } catch (error) {
-            console.error('Error updating activities:', error);
-            showToast('Error updating activities', 'error');
-        }
-    }
-
-    function clearSelection() {
-        document.getElementById('select-all').checked = false;
-        document.querySelectorAll('.activity-checkbox').forEach(cb => cb.checked = false);
-        updateBulkActions();
+        // For now, just open in edit mode for viewing
+        openActivityForm(id);
     }
 
     // Export activities
@@ -757,6 +767,50 @@ include '../../includes/navbar.php';
             .replace(/'/g, '&#039;');
     }
 
+    // Map status codes to labels and badge styles
+    function getStatusLabel(status) {
+        const labels = {
+            'not_started': 'Not Started',
+            'in_progress': 'In Progress',
+            'completed': 'Completed'
+        };
+        return labels[status] || 'Not Specified';
+    }
+
+    function getStatusClass(status) {
+        const classes = {
+            'not_started': 'bg-secondary-100 text-secondary-800',
+            'in_progress': 'bg-warning-100 text-warning-800',
+            'completed': 'bg-success-100 text-success-800'
+        };
+        return classes[status] || 'bg-secondary-100 text-secondary-800';
+    }
+
+    // Update summary counters (safe even if the DOM nodes are missing)
+    function updateStatusCounts() {
+        const counts = allActivities.reduce((acc, activity) => {
+            const key = activity.status || 'not_started';
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
+
+        const statusElements = {
+            not_started: document.getElementById('not-started-count'),
+            in_progress: document.getElementById('in-progress-count'),
+            completed: document.getElementById('completed-count'),
+            total: document.getElementById('total-count')
+        };
+
+        Object.entries(statusElements).forEach(([status, el]) => {
+            if (!el) return;
+            if (status === 'total') {
+                el.textContent = allActivities.length;
+            } else {
+                el.textContent = counts[status] || 0;
+            }
+        });
+    }
+
     function showError(message) {
         const tbody = document.getElementById('activities-table-body');
         tbody.innerHTML = `
@@ -772,7 +826,7 @@ include '../../includes/navbar.php';
         `;
     }
 
-    // View activity details modal
+    // View activity details modal (without status)
     function viewActivity(activityId) {
         const activity = allActivities.find(a => a.ActivityID == activityId);
         if (!activity) {
@@ -780,8 +834,6 @@ include '../../includes/navbar.php';
             return;
         }
 
-        const statusClass = getStatusClass(activity.status);
-        const statusLabel = getStatusLabel(activity.status);
         const startDate = formatDate(activity.reported_period_start);
         const endDate = formatDate(activity.reported_period_end);
         const attachments = activity.attachments || [];
@@ -803,10 +855,6 @@ include '../../includes/navbar.php';
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Status</label>
-                            <span class="status-badge ${statusClass}">${statusLabel}</span>
-                        </div>
                         <div>
                             <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Type</label>
                             <p class="text-sm text-text-primary">${escapeHtml(activity.type || 'N/A')}</p>
@@ -839,8 +887,8 @@ include '../../includes/navbar.php';
                         ${attachments.length > 0 ? `
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                                 ${attachments.map(att => `
-                                    <a href="/central-cmi/uploads/activities/${att.filename}" target="_blank" class="group block border border-secondary-200 rounded-lg overflow-hidden hover:border-primary transition-colors">
-                                        <img src="/central-cmi/uploads/activities/${att.filename}" alt="${escapeHtml(att.original_name)}" class="w-full h-32 object-cover" />
+                                    <a href="${BASE_URL}uploads/activities/${att.filename}" target="_blank" class="group block border border-secondary-200 rounded-lg overflow-hidden hover:border-primary transition-colors">
+                                        <img src="${BASE_URL}uploads/activities/${att.filename}" alt="${escapeHtml(att.original_name)}" class="w-full h-32 object-cover" />
                                         <div class="p-2 bg-secondary-50 group-hover:bg-primary-50 transition-colors">
                                             <p class="text-xs text-text-secondary truncate">${escapeHtml(att.original_name)}</p>
                                         </div>
@@ -892,8 +940,8 @@ include '../../includes/navbar.php';
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         ${activity.attachments.map(att => `
                             <div class="border border-secondary-200 rounded-lg overflow-hidden">
-                                <a href="/central-cmi/uploads/activities/${att.filename}" target="_blank">
-                                    <img src="/central-cmi/uploads/activities/${att.filename}" alt="${att.original_name}" class="w-full h-32 object-cover" />
+                                <a href="${BASE_URL}uploads/activities/${att.filename}" target="_blank">
+                                    <img src="${BASE_URL}uploads/activities/${att.filename}" alt="${att.original_name}" class="w-full h-32 object-cover" />
                                 </a>
                                 <div class="p-2">
                                     <p class="text-xs text-text-secondary truncate">${att.original_name}</p>
@@ -943,6 +991,20 @@ include '../../includes/navbar.php';
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         loadActivities();
+        
+        // Toggle "Others" type field
+        const typeSelect = document.getElementById('activity-type');
+        const otherWrapper = document.getElementById('other-type-wrapper');
+        if (typeSelect && otherWrapper) {
+            typeSelect.addEventListener('change', function() {
+                if (this.value === 'Others') {
+                    otherWrapper.classList.remove('hidden');
+                } else {
+                    otherWrapper.classList.add('hidden');
+                    document.getElementById('other-type').value = '';
+                }
+            });
+        }
     });
 </script>
 

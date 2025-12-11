@@ -96,58 +96,100 @@ central-cmi/
 ## Installation
 
 ### Prerequisites
-- XAMPP (or Apache + PHP 8.x + MySQL)
-- Node.js (for Tailwind CSS compilation)
+- PHP 8.x with PDO MySQL extension
+- MySQL 5.7+ or MariaDB 10.3+
+- Apache or Nginx web server
+- Node.js (optional, for Tailwind CSS compilation)
 
-### Setup Steps
+### Platform-Specific Setup
 
-1. **Clone/Copy to web directory**
-   ```bash
-   # For XAMPP on macOS
-   cp -r central-cmi /Applications/XAMPP/xamppfiles/htdocs/
+#### Windows (XAMPP)
+
+1. **Install XAMPP** from https://www.apachefriends.org/
+2. **Copy project** to `C:\xampp\htdocs\central-cmi`
+3. **Start Apache and MySQL** from XAMPP Control Panel
+4. **Create database** via phpMyAdmin or command line:
+   ```cmd
+   C:\xampp\mysql\bin\mysql -u root < database\schema.sql
    ```
+5. **Access**: http://localhost/central-cmi/
 
-2. **Create the database**
+#### macOS (XAMPP)
+
+1. **Install XAMPP** from https://www.apachefriends.org/
+2. **Copy project** to `/Applications/XAMPP/xamppfiles/htdocs/central-cmi`
+3. **Start XAMPP** and enable Apache + MySQL
+4. **Create database**:
+   ```bash
+   /Applications/XAMPP/xamppfiles/bin/mysql -u root < database/schema.sql
+   ```
+5. **Set permissions**:
+   ```bash
+   chmod -R 777 uploads/
+   ```
+6. **Access**: http://localhost/central-cmi/
+
+#### Linux (Apache + MySQL)
+
+1. **Install requirements**:
+   ```bash
+   sudo apt install apache2 php php-mysql php-pdo mysql-server
+   ```
+2. **Clone/copy project** to `/var/www/html/central-cmi`
+3. **Create database**:
    ```bash
    mysql -u root -p < database/schema.sql
    ```
-
-3. **Configure database connection**
-   
-   Edit `database/config.php` with your database credentials:
-   ```php
-   $host = 'localhost';
-   $dbname = 'central_cmi';
-   $username = 'root';
-   $password = '';
+4. **Set permissions**:
+   ```bash
+   sudo chown -R www-data:www-data /var/www/html/central-cmi
+   chmod -R 755 /var/www/html/central-cmi
+   chmod -R 777 uploads/
    ```
+5. **Access**: http://localhost/central-cmi/
 
-4. **Configure AI (Optional - for report generation)**
-   
-   Create `config/ai-config.php`:
+#### Production Deployment
+
+1. **Upload files** to your web server's document root
+2. **Create database** and import `database/schema.sql`
+3. **Configure environment** - Copy and edit config:
+   ```bash
+   cp config/env.example.php config/env.php
+   ```
+   Edit `config/env.php` with your database credentials:
+   ```php
+   return [
+       'db_host' => 'your-db-host',
+       'db_name' => 'central_cmi',
+       'db_user' => 'your-db-user',
+       'db_pass' => 'your-db-password',
+       'db_port' => 3306,
+   ];
+   ```
+4. **Set permissions** on `uploads/` directory
+5. **Configure AI** (Optional) - Create `config/ai-config.php`:
    ```php
    <?php
    define('GROQ_API_KEY', 'your-groq-api-key');
    define('GROQ_API_URL', 'https://api.groq.com/openai/v1/chat/completions');
    define('GROQ_MODEL', 'llama-3.3-70b-versatile');
    ```
-   
    Get a free API key at: https://console.groq.com
 
-5. **Set upload directory permissions**
-   ```bash
-   chmod -R 777 uploads/
-   ```
+### Folder Installation
 
-6. **Install Node dependencies (for Tailwind)**
-   ```bash
-   npm install
-   ```
+The application auto-detects its base URL, so it works in:
+- Root: `http://yourdomain.com/`
+- Subfolder: `http://yourdomain.com/central-cmi/`
+- Any custom folder name: `http://yourdomain.com/my-app/`
 
-7. **Access the application**
-   ```
-   http://localhost/central-cmi/
-   ```
+### Tailwind CSS (Optional)
+
+If you need to modify styles:
+```bash
+npm install
+npm run build:css
+```
 
 ## Database Schema
 

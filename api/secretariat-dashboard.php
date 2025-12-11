@@ -1,14 +1,20 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../database/config.php';
-require_once __DIR__ . '/../database/auth.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Only secretariat can access this dashboard data
-require_role(['secretariat']);
+require_once __DIR__ . '/../database/config.php';
+require_once __DIR__ . '/../database/auth.php';
+
+// Check role for API (return JSON instead of redirect)
+$isSecretariat = !empty($_SESSION['is_secretariat']) || (!empty($_SESSION['user_role']) && $_SESSION['user_role'] === 'secretariat');
+if (!$isSecretariat) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized - secretariat access required']);
+    exit;
+}
 
 try {
     if (!isset($pdo)) {
@@ -47,13 +53,18 @@ function getDashboardStats($pdo) {
     $stmt = $pdo->query("SELECT COUNT(*) as total FROM Activity");
     $totalActivities = (int)$stmt->fetchColumn();
     
-    // Activities by status
+    // Activities by status (use COALESCE to handle empty tables)
     $stmt = $pdo->query("SELECT 
-        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-        SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
-        SUM(CASE WHEN status = 'not_started' THEN 1 ELSE 0 END) as not_started
+        COALESCE(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END), 0) as completed,
+        COALESCE(SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END), 0) as in_progress,
+        COALESCE(SUM(CASE WHEN status = 'not_started' THEN 1 ELSE 0 END), 0) as not_started
     FROM Activity");
     $statusCounts = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Handle case when statusCounts is false (empty result)
+    if (!$statusCounts) {
+        $statusCounts = ['completed' => 0, 'in_progress' => 0, 'not_started' => 0];
+    }
     
     // Overdue activities
     $stmt = $pdo->query("SELECT COUNT(*) FROM Activity WHERE status != 'completed' AND reported_period_end < CURDATE()");
@@ -64,7 +75,7 @@ function getDashboardStats($pdo) {
     $totalUsers = (int)$stmt->fetchColumn();
     
     // Pending reports (activities not completed)
-    $pendingReports = (int)$statusCounts['not_started'] + (int)$statusCounts['in_progress'];
+    $pendingReports = (int)($statusCounts['not_started'] ?? 0) + (int)($statusCounts['in_progress'] ?? 0);
     
     // Notification stats
     $stmt = $pdo->query("SELECT COUNT(*) FROM EmailNotification");
@@ -77,9 +88,9 @@ function getDashboardStats($pdo) {
     
     return [
         'totalActivities' => $totalActivities,
-        'completedActivities' => (int)$statusCounts['completed'],
-        'inProgressActivities' => (int)$statusCounts['in_progress'],
-        'notStartedActivities' => (int)$statusCounts['not_started'],
+        'completedActivities' => (int)($statusCounts['completed'] ?? 0),
+        'inProgressActivities' => (int)($statusCounts['in_progress'] ?? 0),
+        'notStartedActivities' => (int)($statusCounts['not_started'] ?? 0),
         'overdueActivities' => $overdueCount,
         'totalUsers' => $totalUsers,
         'pendingReports' => $pendingReports,
@@ -147,13 +158,13 @@ function getActivitiesList($pdo) {
 function getRecentSystemActivity($pdo) {
     $recentActivity = [];
     
-    // Recent completed activities
+    // Recent completed activities (use created_at since Activity table has no updated_at)
     $stmt = $pdo->query("
-        SELECT a.title, a.updated_at, u.firstName, u.lastName
+        SELECT a.title, a.created_at, u.firstName, u.lastName
         FROM Activity a
         LEFT JOIN User u ON a.created_by = u.UserID
         WHERE a.status = 'completed'
-        ORDER BY a.updated_at DESC
+        ORDER BY a.created_at DESC
         LIMIT 2
     ");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -163,7 +174,7 @@ function getRecentSystemActivity($pdo) {
             'iconBg' => 'success',
             'title' => 'Activity completed by ' . trim($row['firstName'] . ' ' . $row['lastName']),
             'subtitle' => $row['title'],
-            'time' => getTimeAgo($row['updated_at'])
+            'time' => getTimeAgo($row['created_at'])
         ];
     }
     
